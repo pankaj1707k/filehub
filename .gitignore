@@ -1,0 +1,21 @@
+# virtual environments
+venv
+env
+.venv
+.env
+
+# python
+__pycache__
+*.py[cod]
+*$py.class
+
+# django
+*.log
+db.sqlite3
+
+# macOS
+*.DS_Store
+
+# profile images (dev phase)
+media/*
+!media/default.jpg
