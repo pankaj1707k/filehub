@@ -7,3 +7,6 @@ class User(AbstractUser):
     last_name = None
     email = models.EmailField("email", unique=True)
     name = models.CharField("name", max_length=256, blank=True, null=True)
+
+    def get_full_name(self):
+        return self.name
