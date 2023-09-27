@@ -12,6 +12,8 @@ A simple cloud based file storage platform.
   - Windows: `$ python -m venv .venv && .venv\Scripts\activate.bat`
 - Install dependencies:
   `$ pip install -r requirements.txt`
+- Install git hook scripts:
+  `$ pre-commit install`
 - Run migrations:
   `$ python manage.py migrate`
 - (Optional) Create a superuser to access the admin site:
