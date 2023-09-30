@@ -12,12 +12,12 @@ class UserAuthTest(TestCase):
 
     def test_username_login(self):
         self.assertFalse(get_user(self.client).is_authenticated)
-        self.client.login(login="testuser0", password="testing@321")
+        self.client.login(username="testuser0", password="testing@321")
         self.assertTrue(get_user(self.client).is_authenticated)
 
     def test_email_login(self):
         self.assertFalse(get_user(self.client).is_authenticated)
-        self.client.login(login="tu0@test.com", password="testing@321")
+        self.client.login(username="tu0@test.com", password="testing@321")
         self.assertTrue(get_user(self.client).is_authenticated)
 
     def tearDown(self):
