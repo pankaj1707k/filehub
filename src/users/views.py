@@ -1,52 +1,55 @@
-from django.contrib import messages
-from django.contrib.auth import authenticate, login
-from django.shortcuts import redirect, render
+from django.conf import settings
+from django.contrib.auth import login
+from django.contrib.auth import views as auth_views
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.views import generic
 
 from users import forms
 
 
 class HomeView(generic.TemplateView):
+    """
+    Render the landing page. Redirect logged in users to the dashboard.
+    """
+
     template_name = "home.html"
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect("dashboard")
+            return redirect(settings.LOGIN_REDIRECT_URL)
         return super().get(request, *args, **kwargs)
 
 
-class LoginView(generic.TemplateView):
+class LoginView(auth_views.LoginView):
+    """
+    Render the login form and handle the login action. Redirect logged in
+    users to the dashboard.
+    """
+
     template_name = "login.html"
-    form_class = forms.UserLoginForm
-
-    def get(self, request):
-        form = self.form_class()
-        context = self.get_context_data()
-        context["form"] = form
-        return render(request, self.template_name, context)
-
-    def post_form_valid(self, request, form):
-        username = form.cleaned_data.get("username")
-        password = form.cleaned_data.get("password")
-        return authenticate(request, username=username, password=password)
-
-    def post(self, request):
-        form = self.form_class(request.POST)
-        if form.is_valid():
-            user = self.post_form_valid(request, form)
-            if user:
-                login(request, user)
-                return redirect("dashboard")
-            else:
-                messages.error(request, "Invalid credentials")
-        context = self.get_context_data()
-        context["form"] = form
-        return render(request, self.template_name, context)
+    redirect_authenticated_user = True
 
 
-class RegisterView(LoginView):
+class RegisterView(generic.FormView):
+    """
+    Render the registration form and handle user registration. Successfully
+    registered users are immediately logged in and redirected to the dashboard.
+    """
+
     template_name = "register.html"
-    form_class = forms.UserRegisterForm
+    form_class = forms.UserCreationForm
+    success_url = reverse_lazy(settings.LOGIN_REDIRECT_URL)
 
-    def post_form_valid(self, request, form):
-        return form.save()
+    def form_valid(self, form):
+        user = form.save()
+        login(self.request, user)
+        return super().form_valid(form)
+
+
+class DashboardView(generic.TemplateView):
+    """
+    Render the dashboard for an authenticated user.
+    """
+
+    template_name = "dashboard.html"

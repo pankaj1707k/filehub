@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block main %}
+<form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+    <fieldset>
+        {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {% render_field field %}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+    </fieldset>
+    <button type="submit">Log In</button>
+</form>
+{% endblock %}
