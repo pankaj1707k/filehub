@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block main %}
+<form method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Reset password</legend>
+        <div>
+            <label for="{{ form.new_password1.id_for_label }}">{{ form.new_password1.label }}</label>
+            {% render_field form.new_password1 %}
+            {{ form.new_password1.errors }}
+        </div>
+        <div>
+            <label for="{{ form.new_password2.id_for_label }}">{{ form.new_password2.label }}</label>
+            {% render_field form.new_password2 %}
+            {{ form.new_password2.errors }}
+        </div>
+    </fieldset>
+    <button type="submit">Change password</button>
+</form>
+{% endblock main %}

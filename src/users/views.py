@@ -61,3 +61,35 @@ class DashboardView(generic.TemplateView):
     """
 
     template_name = "dashboard.html"
+
+
+class PasswordResetView(auth_views.PasswordResetView):
+    """
+    Request for a password reset
+    """
+
+    template_name = "password_reset/request_form.html"
+
+
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    """
+    Show 'request sent to email' message
+    """
+
+    template_name = "password_reset/request_sent.html"
+
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    """
+    Confirm and update new password
+    """
+
+    template_name = "password_reset/confirm.html"
+
+
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    """
+    Show 'password reset success' message
+    """
+
+    template_name = "password_reset/complete.html"

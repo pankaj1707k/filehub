@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load widget_tweaks %}
+{% block main %}
+<form method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Reset Password</legend>
+        <div>
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            {% render_field form.email %}
+            {{ form.email.errors }}
+        </div>
+    </fieldset>
+    <button type="submit">Request password reset</button>
+</form>
+{% endblock main %}
