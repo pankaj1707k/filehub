@@ -47,6 +47,14 @@ class RegisterView(generic.FormView):
         return super().form_valid(form)
 
 
+class LogoutView(auth_views.LogoutView):
+    """
+    Log out the user and redirect to the landing page.
+    """
+
+    template_name = None
+
+
 class DashboardView(generic.TemplateView):
     """
     Render the dashboard for an authenticated user.

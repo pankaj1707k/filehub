@@ -80,3 +80,27 @@ class UserRegisterTest(TestCase):
     def test_register_success_redirect(self):
         response = self.client.post(self.register_url, self.testuser, follow=True)
         self.assertRedirects(response, reverse(settings.LOGIN_REDIRECT_URL))
+
+
+class UserLogoutTest(TestCase):
+    """
+    Tests for log out and consequent redirect.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.testuser = User.objects.create(username="testuser", email="tu@test.com")
+        cls.testuser.set_password("testing@321")
+        cls.testuser.save()
+        cls.logout_url = reverse("logout")
+
+    def test_logout_success_redirect(self):
+        self.client.force_login(self.testuser)
+        response = self.client.post(self.logout_url)
+        self.assertRedirects(response, reverse(settings.LOGOUT_REDIRECT_URL))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        cls.testuser.delete()
