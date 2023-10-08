@@ -1,4 +1,10 @@
 {% extends "base.html" %}
 {% block main %}
 Dashboard (authenticated)
+
+<div>
+    <input type="file" name="select files" id="file-selector" multiple>
+    <button id="upload-btn">Upload</button>
+    <div id="status"></div>
+</div>
 {% endblock main %}
