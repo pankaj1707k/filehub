@@ -4,3 +4,4 @@ django-environ==0.11.2
 sqlparse==0.4.4
 pre-commit==3.4.0
 django-widget-tweaks==1.5.0
+minio==7.1.17

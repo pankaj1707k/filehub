@@ -11,6 +11,7 @@ import environ
 env = environ.Env(
     # casting, default value
     DEBUG=(bool, False),
+    S3_SECURE_CONNECTION=(bool, True),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -150,3 +151,16 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = env("EMAIL_HOST_USER")
 
 EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+
+
+# S3
+
+S3_ENDPOINT_URL = env("S3_ENDPOINT_URL")
+
+S3_ACCESS_KEY = env("S3_ACCESS_KEY")
+
+S3_SECRET_KEY = env("S3_SECRET_KEY")
+
+S3_BUCKET = env("S3_BUCKET")
+
+S3_SECURE_CONNECTION = env("S3_SECURE_CONNECTION")
