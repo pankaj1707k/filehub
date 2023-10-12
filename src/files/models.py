@@ -27,6 +27,9 @@ class Directory(models.Model):
         User, on_delete=models.CASCADE, related_name="dirs", related_query_name="dir"
     )
 
+    class Meta:
+        verbose_name_plural = "directories"
+
     def __str__(self) -> str:
         return self.name
 
