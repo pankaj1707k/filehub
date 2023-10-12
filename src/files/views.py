@@ -3,11 +3,12 @@ from uuid import uuid4
 from django.http import HttpRequest, JsonResponse
 from django.views import View
 
+from files.mixins import AuthenticatedRequestMixin
 from files.models import File
 from files.storage import S3
 
 
-class SignedURLView(View):
+class SignedURLView(AuthenticatedRequestMixin, View):
     """
     Generate a signed URL for client-side object storage access
     """
@@ -15,10 +16,10 @@ class SignedURLView(View):
     http_method_names = ["get"]
 
     def get(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
-        if not request.user.is_authenticated:
-            return JsonResponse(
-                {"error": "permission denied for anonymous user"}, status=403
-            )
+        # if not request.user.is_authenticated:
+        #     return JsonResponse(
+        #         {"error": "permission denied for anonymous user"}, status=403
+        #     )
 
         upload = request.GET.get("upload", "").lower() == "true"
         download = request.GET.get("download", "").lower() == "true"
