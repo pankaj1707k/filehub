@@ -42,7 +42,7 @@ class File(models.Model):
     id = models.UUIDField("id", primary_key=True, default=uuid4, editable=False)
     name = models.CharField("name", max_length=256)
 
-    # filled using the `Content-type` header
+    # filled using the file's mime type value
     type = models.CharField("file type", max_length=75)
 
     # represented in bytes
@@ -54,6 +54,8 @@ class File(models.Model):
         on_delete=models.CASCADE,
         related_name="files",
         related_query_name="file",
+        null=True,
+        blank=True,
     )
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="files", related_query_name="file"

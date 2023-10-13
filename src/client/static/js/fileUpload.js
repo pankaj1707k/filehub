@@ -1,3 +1,26 @@
+/**
+ * Extract cookie value by its name
+ *
+ * @param {string} name - Name of the cookie
+ */
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== "") {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      // Does this cookie string begin with the name we want?
+      if (cookie.substring(0, name.length + 1) === name + "=") {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
+const csrftoken = getCookie("csrftoken");
+
 const uploadButton = document.getElementById("upload-btn");
 
 // listen for a click event to upload
@@ -27,11 +50,16 @@ async function uploadFile(file, data) {
   // `status` element is temporary, replace with a progress bar
   let status = document.getElementById("status");
   try {
-    let res = await fetch(data.url, { method: "PUT", body: file });
+    let res = await fetch(data.url, {
+      method: "PUT",
+      body: file,
+      headers: { "X-CSRFToken": csrftoken },
+    });
     status.innerHTML += `<br>Uploaded ${file.name}`;
   } catch (error) {
     console.log(error);
   }
+  return data;
 }
 
 /**
@@ -41,5 +69,24 @@ async function uploadFile(file, data) {
  * @param {Object} data - Contains the upload URL and UUID
  */
 async function sendMetadata(file, data) {
-  // TODO: send the file metadata to the app server for database entry
+  try {
+    let res = await fetch("/files/file/new", {
+      method: "POST",
+      body: JSON.stringify({
+        id: data.key,
+        name: file.name,
+        size: file.size,
+        type: file.type,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": csrftoken,
+      },
+    });
+    if (res.status === 400) {
+      console.log("Metadata update failed");
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }

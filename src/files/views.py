@@ -1,8 +1,10 @@
+import json
 from uuid import uuid4
 
-from django.http import HttpRequest, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views import View
 
+from files.forms import FileForm
 from files.mixins import AuthenticatedRequestMixin
 from files.models import File
 from files.storage import S3
@@ -16,11 +18,6 @@ class SignedURLView(AuthenticatedRequestMixin, View):
     http_method_names = ["get"]
 
     def get(self, request: HttpRequest, *args, **kwargs) -> JsonResponse:
-        # if not request.user.is_authenticated:
-        #     return JsonResponse(
-        #         {"error": "permission denied for anonymous user"}, status=403
-        #     )
-
         upload = request.GET.get("upload", "").lower() == "true"
         download = request.GET.get("download", "").lower() == "true"
 
@@ -43,3 +40,20 @@ class SignedURLView(AuthenticatedRequestMixin, View):
 
         url = S3().get_download_url(key)
         return JsonResponse({"url": url, "key": key}, status=200)
+
+
+class FileCreateView(AuthenticatedRequestMixin, View):
+    """
+    Create a file metadata object. The request must have `application/json`
+    content type.
+    """
+
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        file_form = FileForm(json.loads(request.body))
+        if file_form.is_valid():
+            file_form.instance.owner = request.user
+            file_form.save()
+            return HttpResponse(status=201)
+        return JsonResponse(file_form.errors, status=400)

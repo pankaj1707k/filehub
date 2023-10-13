@@ -79,3 +79,36 @@ class SignedURLViewTest(TestCase):
     def tearDownClass(cls) -> None:
         super().tearDownClass()
         cls.user.delete()
+
+
+class FileCreateUpdateDeleteTest(TestCase):
+    """
+    Tests for create, update, delete operations for file objects
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.create_url = reverse("create-file")
+        cls.user = User.objects.create(username="testuser", email="tu@test.com")
+        cls.user.set_password("testing123")
+        cls.user.save()
+
+    def setUp(self) -> None:
+        self.client.force_login(self.user)
+
+    def test_create_file(self) -> None:
+        response = self.client.post(
+            self.create_url,
+            {"id": uuid4(), "name": "testfile", "type": "text/plain", "size": 100},
+            content_type="application/json",
+        )
+        self.assertEqual(response.status_code, 201)
+
+    def tearDown(self) -> None:
+        self.client.logout()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        cls.user.delete()
