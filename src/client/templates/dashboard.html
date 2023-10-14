@@ -1,10 +1,40 @@
 {% extends "base.html" %}
-{% block main %}
-Dashboard (authenticated)
-
-<div>
-    <input type="file" name="select files" id="file-selector" multiple>
-    <button id="upload-btn">Upload</button>
-    <div id="status"></div>
+{% load static %}
+{% block content %}
+<div class="files-main-content">
+    <div class="files-statistics">
+        <h2>Files Statistics</h2>
+        <!-- repeat following div for all file types -->
+        <div class="box">
+            <div class="file-info">
+                <i class="fa-regular fa-file-pdf"></i>
+                <div>
+                    <p>PDF Files</p>
+                    <span>130</span>
+                </div>
+            </div>
+            <span>6.5GB</span>
+        </div>
+        <!-- Upload new file -->
+        <input type="file" name="select files" id="file-selector" multiple hidden>
+        <button id="upload-btn"><i class="fa-solid fa-angles-up"></i>Upload</button>
+    </div>
+    <div class="files-boxes">
+        <!-- TODO: Make file blocks dynamic using htmx and implement same for folders -->
+        <div class="file-box">
+            <i class="fa-solid fa-download"></i>
+            <div class="file-box-card-body">
+                <img src="{% static 'images/file_types/txt.svg' %}" alt="" />
+                <p>TestFile</p>
+                <span>Some user</span>
+            </div>
+            <div class="file-box-card-footer">
+                <span>
+                    October 15, 2023 at 0040
+                </span>
+                <span>1024</span>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock main %}
+{% endblock content %}

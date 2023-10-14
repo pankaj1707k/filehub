@@ -20,17 +20,22 @@ function getCookie(name) {
 }
 
 const csrftoken = getCookie("csrftoken");
-
 const uploadButton = document.getElementById("upload-btn");
+const fileInput = document.getElementById("file-selector");
 
-// listen for a click event to upload
-uploadButton.addEventListener("click", uploadHandler);
+// listen for a click event to upload and trigger a file input
+uploadButton.addEventListener("click", () => {
+  fileInput.click();
+});
+
+// start upload process after selecting files
+fileInput.addEventListener("change", uploadHandler);
 
 /**
  * Handle the upload process for multiple files
  */
 async function uploadHandler() {
-  var files = document.getElementById("file-selector").files;
+  var files = fileInput.files;
   for (let i = 0; i < files.length; i++) {
     let uploadURL = await fetch("/files/get-signed-url/?upload=true");
     uploadURL

@@ -5,21 +5,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
-    <title>fileHUB</title>
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&amp;display=swap">
+    <title>fileHub | Dashboard</title>
 </head>
 
 <body>
-    <header>
-        <!-- TODO: replace with a dynamic navbar -->
-        <h1>fileHUB</h1>
-    </header>
+    <div class="page-content">
+        <div class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-xmark xmark"></i>
+                <h3>Zana</h3>
+            </div>
+            <ul>
+                <li>
+                    <a href="{% url 'dashboard' %}" class="sidebar-link">
+                        <i class="fa-regular fa-chart-bar fa-fw"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
 
-    <main>
-        {% block main %} {% endblock %}
-    </main>
+                <li>
+                    <a href="#" class="sidebar-link">
+                        <i class="fa-solid fa-gear fa-fw"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
 
-    <!-- file uploader -->
+            </ul>
+        </div>
+        <main>
+            <div class="header">
+                <i class="fa-solid fa-bars bar-item"></i>
+                <div class="search">
+                    <input type="search" placeholder="Type A Keyword" />
+                </div>
+
+                <div class="profile">
+                    <a href="{% url 'logout' %}">Logout</a>
+                    <img src="{% static 'images/avatar.png' %}" alt="No Image" />
+                </div>
+            </div>
+            <div class="main-content">
+                {% block content %} {% endblock %}
+            </div>
+        </main>
+    </div>
+
+    <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/fileUpload.js' %}"></script>
 </body>
 
