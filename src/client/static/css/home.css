@@ -10,7 +10,8 @@
 body {
   /* background-image: url(../images/bg2.jpg);
     background-size: cover; */
-  background-color: #13142e;
+  /* background-color: #13142e; */
+  background-image: linear-gradient(0deg, #020416, #131535);
 }
 .background {
   width: 430px;
