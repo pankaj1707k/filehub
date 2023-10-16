@@ -17,7 +17,7 @@ class HomeView(TemplateView):
     Render the landing page. Redirect logged in users to the dashboard.
     """
 
-    template_name = "home.html"
+    template_name = "public/home.html"
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
@@ -31,7 +31,7 @@ class LoginView(auth_views.LoginView):
     users to the dashboard.
     """
 
-    template_name = "login.html"
+    template_name = "public/login.html"
     redirect_authenticated_user = True
 
 
@@ -41,7 +41,7 @@ class RegisterView(FormView):
     registered users are immediately logged in and redirected to the dashboard.
     """
 
-    template_name = "register.html"
+    template_name = "public/register.html"
     form_class = forms.UserCreationForm
     success_url = reverse_lazy(settings.LOGIN_REDIRECT_URL)
 
@@ -64,7 +64,7 @@ class DashboardView(AuthenticatedRequestMixin, TemplateView):
     Render the dashboard for an authenticated user.
     """
 
-    template_name = "dashboard.html"
+    template_name = "private/dashboard.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -82,7 +82,7 @@ class PasswordResetView(auth_views.PasswordResetView):
     Request for a password reset
     """
 
-    template_name = "password_reset/request_form.html"
+    template_name = "public/password_reset/request_form.html"
 
 
 class PasswordResetDoneView(auth_views.PasswordResetDoneView):
@@ -90,7 +90,7 @@ class PasswordResetDoneView(auth_views.PasswordResetDoneView):
     Show 'request sent to email' message
     """
 
-    template_name = "password_reset/request_sent.html"
+    template_name = "public/password_reset/request_sent.html"
 
 
 class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
@@ -98,7 +98,7 @@ class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
     Confirm and update new password
     """
 
-    template_name = "password_reset/confirm.html"
+    template_name = "public/password_reset/confirm.html"
 
 
 class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
@@ -106,4 +106,4 @@ class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     Show 'password reset success' message
     """
 
-    template_name = "password_reset/complete.html"
+    template_name = "public/password_reset/complete.html"

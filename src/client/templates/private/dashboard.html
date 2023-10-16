@@ -1,4 +1,4 @@
-{% extends "dashboard_base.html" %}
+{% extends "private/base.html" %}
 {% load static %}
 {% block content %}
 <div class="files-main-content">
@@ -21,7 +21,7 @@
     </div>
     <div class="files-boxes">
         <!-- TODO: Make file blocks dynamic using htmx and implement same for folders -->
-        {% include "partials/dirs_and_files.html" %}
+        {% include "private/dirs_and_files.html" %}
         <!-- <div class="file-box">
             <i class="fa-solid fa-download"></i>
             <div class="file-box-card-body">

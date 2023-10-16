@@ -17,7 +17,7 @@ class UserAuthTest(TestCase):
         cls.testuser = User.objects.create(username="testuser0", email="tu0@test.com")
         cls.testuser.set_password("testing@321")
         cls.testuser.save()
-        cls.login_template = "login.html"
+        cls.login_template = "public/login.html"
         cls.login_url = reverse(settings.LOGIN_URL)
 
     def test_username_login(self):
@@ -57,7 +57,7 @@ class UserRegisterTest(TestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.register_url = reverse("register")
-        cls.register_template = "register.html"
+        cls.register_template = "public/register.html"
         cls.testuser = {
             "username": "testuser",
             "email": "tu@test.com",

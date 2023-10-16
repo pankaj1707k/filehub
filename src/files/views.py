@@ -67,7 +67,7 @@ class FileDirListView(AuthenticatedRequestMixin, TemplateView):
     Return rendered template for file and directory list.
     """
 
-    template_name = "partials/dirs_and_files.html"
+    template_name = "private/dirs_and_files.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
