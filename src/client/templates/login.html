@@ -1,6 +1,7 @@
 {% extends "home_base.html" %}
 {% load widget_tweaks %}
 {% block main %}
+<h1 class="logo">FILEHUB</h1>
 <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
     <h3>Sign In</h3>

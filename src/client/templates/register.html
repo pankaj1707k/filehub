@@ -1,16 +1,28 @@
 {% extends "home_base.html" %}
 {% load widget_tweaks %}
 {% block main %}
+<h1 class="logo">FILEHUB</h1>
 <form method="post" action="{% url 'register' %}">
     {% csrf_token %}
     <h3>Sign Up</h3>
-    <fieldset>
-        {% for field in form %}
-        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-        {% render_field field %}
-        {{ field.errors }}
-        {% endfor %}
-    </fieldset>
+    <div class="signupform">
+        <fieldset class="leftform">
+            <label for="{{ form.username.id_for_label }}">Username</label>
+            {% render_field form.username %}
+            {{ form.username.errors }}
+            <label for="{{ form.password1.id_for_label }}">Password</label>
+            {% render_field form.password1 %}
+            {{ form.password1.errors }}
+        </fieldset>
+        <fieldset class="rightform">
+            <label for="{{ form.email.id_for_label }}">Email</label>
+            {% render_field form.email %}
+            {{ form.email.errors }}
+            <label for="{{ form.password2.id_for_label }}">Confirm Password</label>
+            {% render_field form.password2 %}
+            {{ form.password2.errors }}
+        </fieldset>
+    </div>
     <button type="submit">Sign up</button>
 </form>
 {% endblock %}
