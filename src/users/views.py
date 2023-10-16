@@ -1,14 +1,18 @@
+from typing import Any
+
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-from django.views import generic
+from django.views.generic import FormView, TemplateView
 
+from files.mixins import AuthenticatedRequestMixin
+from files.models import Directory, File
 from users import forms
 
 
-class HomeView(generic.TemplateView):
+class HomeView(TemplateView):
     """
     Render the landing page. Redirect logged in users to the dashboard.
     """
@@ -31,7 +35,7 @@ class LoginView(auth_views.LoginView):
     redirect_authenticated_user = True
 
 
-class RegisterView(generic.FormView):
+class RegisterView(FormView):
     """
     Render the registration form and handle user registration. Successfully
     registered users are immediately logged in and redirected to the dashboard.
@@ -55,12 +59,22 @@ class LogoutView(auth_views.LogoutView):
     template_name = None
 
 
-class DashboardView(generic.TemplateView):
+class DashboardView(AuthenticatedRequestMixin, TemplateView):
     """
     Render the dashboard for an authenticated user.
     """
 
     template_name = "dashboard.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["dirs"] = Directory.objects.filter(
+            parent_directory__id=None, owner=self.request.user
+        )
+        context["files"] = File.objects.filter(
+            directory__id=None, owner=self.request.user
+        )
+        return context
 
 
 class PasswordResetView(auth_views.PasswordResetView):

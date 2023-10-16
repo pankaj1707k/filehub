@@ -1,12 +1,15 @@
 import json
+from typing import Any
 from uuid import uuid4
 
+from django import http
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views import View
+from django.views.generic import TemplateView
 
 from files.forms import FileForm
 from files.mixins import AuthenticatedRequestMixin
-from files.models import File
+from files.models import Directory, File
 from files.storage import S3
 
 
@@ -57,3 +60,18 @@ class FileCreateView(AuthenticatedRequestMixin, View):
             file_form.save()
             return HttpResponse(status=201)
         return JsonResponse(file_form.errors, status=400)
+
+
+class FileDirListView(AuthenticatedRequestMixin, TemplateView):
+    """
+    Return rendered template for file and directory list.
+    """
+
+    template_name = "partials/dirs_and_files.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        parent_id = self.request.GET.get("id")
+        context["dirs"] = Directory.objects.filter(parent_directory__id=parent_id)
+        context["files"] = File.objects.filter(directory__id=parent_id)
+        return context

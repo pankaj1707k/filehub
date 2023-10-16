@@ -21,10 +21,12 @@
     </div>
     <div class="files-boxes">
         <!-- TODO: Make file blocks dynamic using htmx and implement same for folders -->
-        <div class="file-box">
+        {% include "partials/dirs_and_files.html" %}
+        <!-- <div class="file-box">
             <i class="fa-solid fa-download"></i>
             <div class="file-box-card-body">
                 <img src="{% static 'images/file_types/txt.svg' %}" alt="" />
+                <h3>F</h3>
                 <p>TestFile</p>
                 <span>Some user</span>
             </div>
@@ -34,7 +36,7 @@
                 </span>
                 <span>1024</span>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 {% endblock content %}
