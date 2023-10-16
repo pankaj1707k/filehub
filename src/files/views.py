@@ -8,9 +8,9 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from files.forms import FileForm
-from files.mixins import AuthenticatedRequestMixin
 from files.models import Directory, File
 from files.storage import S3
+from users.mixins import AuthenticatedRequestMixin
 
 
 class SignedURLView(AuthenticatedRequestMixin, View):

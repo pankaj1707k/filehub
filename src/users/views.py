@@ -7,9 +7,9 @@ from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, TemplateView
 
-from files.mixins import AuthenticatedRequestMixin
 from files.models import Directory, File
 from users import forms
+from users.mixins import AuthenticatedRequestMixin
 
 
 class HomeView(TemplateView):
