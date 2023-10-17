@@ -41,7 +41,10 @@ async function uploadHandler() {
     uploadURL
       .json()
       .then((data) => uploadFile(files[i], data))
-      .then((data) => sendMetadata(files[i], data));
+      .then((data) => sendMetadata(files[i], data))
+      .then(() => {
+        htmx.trigger(".files-boxes", "uploaded");
+      });
   }
 }
 
@@ -82,6 +85,7 @@ async function sendMetadata(file, data) {
         name: file.name,
         size: file.size,
         type: file.type,
+        directory: document.getElementById("currDir").value,
       }),
       headers: {
         "Content-Type": "application/json",

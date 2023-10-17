@@ -1,7 +1,8 @@
 {% load static %}
 {% for dir in dirs %}
+<input type="text" id="currDir" name="id" value="{{ curr_dir }}" hidden>
 <div class="file-box" hx-get="/files/dir/children/?id={{ dir.id }}" hx-trigger="dblclick" hx-target=".files-boxes"
-    hx-swap="innerHTML">
+    hx-swap="innerHTML" hx-params="none">
     <i class="fa-solid fa-download"></i>
     <div class="file-box-card-body">
         <!-- <img src="{% static 'images/file_types/txt.svg' %}" alt="" /> -->

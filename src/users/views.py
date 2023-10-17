@@ -74,6 +74,7 @@ class DashboardView(AuthenticatedRequestMixin, TemplateView):
         context["files"] = File.objects.filter(
             directory__id=None, owner=self.request.user
         )
+        context["curr_dir"] = None
         return context
 
 

@@ -71,7 +71,12 @@ class FileDirListView(AuthenticatedRequestMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        parent_id = self.request.GET.get("id")
-        context["dirs"] = Directory.objects.filter(parent_directory__id=parent_id)
-        context["files"] = File.objects.filter(directory__id=parent_id)
+        dir_id = self.request.GET.get("id")
+        context["dirs"] = Directory.objects.filter(
+            parent_directory__id=dir_id, owner=self.request.user
+        )
+        context["files"] = File.objects.filter(
+            directory__id=dir_id, owner=self.request.user
+        )
+        context["curr_dir"] = dir_id
         return context
