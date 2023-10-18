@@ -28,4 +28,6 @@ urlpatterns = [
         views.PasswordResetCompleteView.as_view(),
         name="password_reset_complete",
     ),
+    path("settings/", views.SettingsView.as_view(), name="settings"),
+    path("update/general/", views.UserUpdateView.as_view(), name="user_update"),
 ]

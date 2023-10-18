@@ -1,0 +1,10 @@
+{% load widget_tweaks %}
+<form hx-post="{% url 'user_update' %}" hx-trigger="submit" hx-swap="outerHTML">
+    {% csrf_token %}
+    {% for field in general_form %}
+    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+    {% render_field field %}
+    {{ field.errors }}
+    {% endfor %}
+    <input type="submit" value="Update">
+</form>

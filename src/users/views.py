@@ -3,8 +3,10 @@ from typing import Any
 from django.conf import settings
 from django.contrib.auth import login
 from django.contrib.auth import views as auth_views
-from django.shortcuts import redirect
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import FormView, TemplateView
 
 from files.models import Directory, File
@@ -108,3 +110,32 @@ class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     """
 
     template_name = "public/password_reset/complete.html"
+
+
+class SettingsView(AuthenticatedRequestMixin, TemplateView):
+    """
+    Render the settings page
+    """
+
+    template_name = "private/settings.html"
+
+
+class UserUpdateView(AuthenticatedRequestMixin, View):
+    """
+    Update user information excluding password.
+    """
+
+    http_method_names = ["get", "post"]
+    template_name = "private/settings_general_form.html"
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        form = forms.UserUpdateForm(instance=request.user)
+        context = {"general_form": form}
+        return render(request, self.template_name, context)
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        form = forms.UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            return render(request, self.template_name, {"general_form": form})
+        return render(request, self.template_name, {"general_form": form}, status=400)
