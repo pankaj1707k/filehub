@@ -131,15 +131,15 @@ class UserUpdateView(AuthenticatedRequestMixin, View):
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         form = forms.UserUpdateForm(instance=request.user)
-        context = {"general_form": form}
+        context = {"form": form}
         return render(request, self.template_name, context)
 
     def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         form = forms.UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            return render(request, self.template_name, {"general_form": form})
-        return render(request, self.template_name, {"general_form": form}, status=400)
+            return render(request, self.template_name, {"form": form})
+        return render(request, self.template_name, {"form": form}, status=400)
 
 
 class PasswordUpdateView(AuthenticatedRequestMixin, View):
