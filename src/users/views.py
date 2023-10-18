@@ -66,7 +66,7 @@ class DashboardView(AuthenticatedRequestMixin, TemplateView):
     Render the dashboard for an authenticated user.
     """
 
-    template_name = "private/dashboard.html"
+    template_name = "private/dashboard/dashboard.html"
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
@@ -117,7 +117,7 @@ class SettingsView(AuthenticatedRequestMixin, TemplateView):
     Render the settings page
     """
 
-    template_name = "private/settings.html"
+    template_name = "private/settings/settings.html"
 
 
 class UserUpdateView(AuthenticatedRequestMixin, View):
@@ -126,7 +126,7 @@ class UserUpdateView(AuthenticatedRequestMixin, View):
     """
 
     http_method_names = ["get", "post"]
-    template_name = "private/settings_general_form.html"
+    template_name = "private/settings/general.html"
 
     def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
         form = forms.UserUpdateForm(instance=request.user)
