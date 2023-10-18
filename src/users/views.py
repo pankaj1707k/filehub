@@ -1,8 +1,9 @@
 from typing import Any
 
 from django.conf import settings
-from django.contrib.auth import login
+from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth import views as auth_views
+from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -139,3 +140,27 @@ class UserUpdateView(AuthenticatedRequestMixin, View):
             form.save()
             return render(request, self.template_name, {"general_form": form})
         return render(request, self.template_name, {"general_form": form}, status=400)
+
+
+class PasswordUpdateView(AuthenticatedRequestMixin, View):
+    """
+    Update user password by verifying old password.
+    """
+
+    http_method_names = ["get", "post"]
+    template_name = "private/settings/password.html"
+
+    def get(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        return render(
+            request, self.template_name, {"form": PasswordChangeForm(request.user)}
+        )
+
+    def post(self, request: HttpRequest, *args: Any, **kwargs: Any) -> HttpResponse:
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            form.save()
+            update_session_auth_hash(request, form.user)
+            return render(
+                request, self.template_name, {"form": PasswordChangeForm(request.user)}
+            )
+        return render(request, self.template_name, {"form": form})

@@ -17,18 +17,8 @@
                 <h2>Change Password</h2>
             </div>
         </div>
-        <div class="general-info-section2">
-            <form>
-                <label for="first-name">Old Password</label>
-                <input type="password" placeholder="First Name" id="first-name" />
-                <label for="last-name">New Password</label>
-                <input type="password" placeholder="New Password" id="last-name" />
-                <label for="Email">Confirm New Password</label>
-                <div class="password">
-                    <input type="password" id="Email" placeholder="Confirm New Password" />
-                    <a href="/#">Change</a>
-                </div>
-            </form>
+        <div class="general-info-section2" hx-get="{% url 'password_update' %}" hx-trigger="load">
+            <!-- Form loads here -->
         </div>
     </div>
 </div>

@@ -30,4 +30,7 @@ urlpatterns = [
     ),
     path("settings/", views.SettingsView.as_view(), name="settings"),
     path("update/general/", views.UserUpdateView.as_view(), name="user_update"),
+    path(
+        "update/password/", views.PasswordUpdateView.as_view(), name="password_update"
+    ),
 ]
