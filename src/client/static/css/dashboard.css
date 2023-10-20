@@ -674,7 +674,8 @@ main .main-content .title::after {
   color: var(--orange-color);
 }
 .files-main-content .files-statistics #upload-btn,
-.main-content .box .general-info-section2 form input[type="submit"] {
+.main-content .box .general-info-section2 form input[type="submit"],
+.files-main-content .files-statistics form #dir-btn {
   background-color: var(--blue-color);
   color: var(--base-color);
   font-size: 1rem;
@@ -688,6 +689,22 @@ main .main-content .title::after {
   -o-border-radius: var(--secondary-radius);
   align-self: center;
   cursor: pointer;
+}
+.files-main-content .files-statistics form input[name="name"] {
+  background-color: var(--base-color);
+  margin-top: var(--fifth-margin);
+  margin-bottom: var(--third-margin);
+  color: white;
+  width: 100%;
+  border: 1px solid var(--eee-color);
+  font-size: 1rem;
+  padding: var(--fourth-padding);
+  border-radius: var(--secondary-radius);
+  -webkit-border-radius: var(--secondary-radius);
+  -moz-border-radius: var(--secondary-radius);
+  -ms-border-radius: var(--secondary-radius);
+  -o-border-radius: var(--secondary-radius);
+  outline: none;
 }
 .files-main-content .files-statistics #upload-btn i {
   padding-right: 0.7em;
