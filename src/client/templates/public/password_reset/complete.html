@@ -1,7 +1,9 @@
 {% extends "public/base.html" %}
 {% block main %}
-<div>
-    Your password has been changed
+<div class="info-wrapper">
+    <p class="info">
+        Your password has been changed<br>
+        <a href="{% url 'login' %}">Log In here</a>
+    </p>
 </div>
-<a href="{% url 'login' %}">Log In here</a>
 {% endblock main %}

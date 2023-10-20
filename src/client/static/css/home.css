@@ -144,3 +144,25 @@ button {
   border-radius: 5px;
   cursor: pointer;
 }
+.info-wrapper {
+  max-width: 75%;
+  margin: 0 auto;
+  margin-top: 3em;
+  padding: 1em 0.8em;
+  border-radius: 0.5em;
+  border-style: solid;
+  border-width: 0.1em;
+  border-color: #90ee90;
+  font-family: "Poppins", sans-serif;
+}
+.info a {
+  font-size: 1rem;
+  color: #e5e5e5;
+}
+.info {
+  margin: 0;
+  padding: 0;
+  font-size: 1.3rem;
+  color: #ffffff;
+  text-align: center;
+}

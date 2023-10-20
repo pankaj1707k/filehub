@@ -1,7 +1,6 @@
 {% extends "public/base.html" %}
 {% load widget_tweaks %}
 {% block main %}
-<h1 class="logo">FILEHUB</h1>
 <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
     <h3>Sign In</h3>
@@ -13,6 +12,7 @@
         {% render_field form.password %}
         {{ form.password.errors }}
     </fieldset>
-    <button type="submit">Log In</button>
+    <button type="submit">Log In</button><br><br>
+    <a href="{% url 'password_reset_request' %}">Forgot Password?</a>
 </form>
 {% endblock %}
