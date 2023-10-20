@@ -2,7 +2,6 @@ import json
 from typing import Any
 from uuid import uuid4
 
-from django import http
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views import View
 from django.views.generic import TemplateView
@@ -71,7 +70,7 @@ class FileDirListView(AuthenticatedRequestMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        dir_id = self.request.GET.get("id")
+        dir_id = self.request.GET.get("parent_directory")
         context["dirs"] = Directory.objects.filter(
             parent_directory__id=dir_id, owner=self.request.user
         )
