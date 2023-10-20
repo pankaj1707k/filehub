@@ -71,13 +71,14 @@ class DashboardView(AuthenticatedRequestMixin, TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
+        root_dir = Directory.objects.get(name="root", owner=self.request.user)
         context["dirs"] = Directory.objects.filter(
-            parent_directory__id=None, owner=self.request.user
+            parent_directory__id=root_dir.id, owner=self.request.user
         )
         context["files"] = File.objects.filter(
-            directory__id=None, owner=self.request.user
+            directory__id=root_dir.id, owner=self.request.user
         )
-        context["curr_dir"] = None
+        context["curr_dir"] = root_dir.id
         return context
 
 
