@@ -6,7 +6,7 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.views import View
 from django.views.generic import TemplateView
 
-from files.forms import FileForm
+from files.forms import DirectoryForm, FileForm
 from files.models import Directory, File
 from files.storage import S3
 from users.mixins import AuthenticatedRequestMixin
@@ -79,3 +79,20 @@ class FileDirListView(AuthenticatedRequestMixin, TemplateView):
         )
         context["curr_dir"] = dir_id
         return context
+
+
+class DirectoryCreateView(AuthenticatedRequestMixin, View):
+    """
+    Create a new directory.
+    """
+
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        form = DirectoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            response = HttpResponse(status=204)
+            response["HX-Trigger"] = "newDirCreated"
+            return response
+        return JsonResponse(form.errors, status=400)

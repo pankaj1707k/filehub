@@ -20,9 +20,16 @@
         <button id="upload-btn">
             <i class="fa-solid fa-angles-up"></i>Upload
         </button>
+        <!-- Create directory -->
+        <form hx-post="{% url 'create_dir' %}" hx-trigger="submit" hx-include="#currDir">
+            {% csrf_token %}
+            <input type="text" name="name" placeholder="New folder">
+            <input type="hidden" name="owner" value="{{ request.user.id }}">
+            <button id="dir-btn" type="submit">Create Folder</button>
+        </form>
     </div>
-    <div class="files-boxes" hx-get="/files/dir/children/" hx-trigger="uploaded" hx-swap="innerHTML"
-        hx-include="#currDir">
+    <div class="files-boxes" hx-get="/files/dir/children/" hx-trigger="uploaded, newDirCreated from:body"
+        hx-swap="innerHTML" hx-include="#currDir">
         {% include "private/dashboard/dirs_and_files.html" %}
     </div>
 </div>
