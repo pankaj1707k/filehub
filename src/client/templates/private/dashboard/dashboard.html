@@ -28,8 +28,8 @@
             <button id="dir-btn" type="submit">Create Folder</button>
         </form>
     </div>
-    <div class="files-boxes" hx-get="/files/dir/children/" hx-trigger="uploaded, newDirCreated from:body"
-        hx-swap="innerHTML" hx-include="#currDir">
+    <div class="files-boxes" hx-get="/dir/children/" hx-trigger="uploaded, newDirCreated from:body" hx-swap="innerHTML"
+        hx-include="#currDir">
         {% include "private/dashboard/dirs_and_files.html" %}
     </div>
 </div>
