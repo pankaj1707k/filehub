@@ -1,21 +1,18 @@
 from typing import Any
 
-from django.conf import settings
 from django.contrib.auth import login, update_session_auth_hash
 from django.contrib.auth import views as auth_views
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import FormView, TemplateView
 
-from files.models import Directory, File
 from users import forms
-from users.mixins import AuthenticatedRequestMixin
+from users.mixins import AuthenticatedRedirectMixin, AuthenticatedRequestMixin
 
 
-class HomeView(TemplateView):
+class HomeView(AuthenticatedRedirectMixin, TemplateView):
     """
     Render the landing page. Redirect logged in users to the dashboard.
     """
@@ -24,11 +21,11 @@ class HomeView(TemplateView):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            return redirect(settings.LOGIN_REDIRECT_URL)
+            return redirect(self.get_success_url())
         return super().get(request, *args, **kwargs)
 
 
-class LoginView(auth_views.LoginView):
+class LoginView(AuthenticatedRedirectMixin, auth_views.LoginView):
     """
     Render the login form and handle the login action. Redirect logged in
     users to the dashboard.
@@ -38,7 +35,7 @@ class LoginView(auth_views.LoginView):
     redirect_authenticated_user = True
 
 
-class RegisterView(FormView):
+class RegisterView(AuthenticatedRedirectMixin, FormView):
     """
     Render the registration form and handle user registration. Successfully
     registered users are immediately logged in and redirected to the dashboard.
@@ -46,9 +43,8 @@ class RegisterView(FormView):
 
     template_name = "public/register.html"
     form_class = forms.UserCreationForm
-    success_url = reverse_lazy(settings.LOGIN_REDIRECT_URL)
 
-    def form_valid(self, form):
+    def form_valid(self, form: forms.UserCreationForm):
         user = form.save()
         login(self.request, user)
         return super().form_valid(form)
@@ -60,26 +56,6 @@ class LogoutView(auth_views.LogoutView):
     """
 
     template_name = None
-
-
-class DashboardView(AuthenticatedRequestMixin, TemplateView):
-    """
-    Render the dashboard for an authenticated user.
-    """
-
-    template_name = "private/dashboard/dashboard.html"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        context = super().get_context_data(**kwargs)
-        root_dir = Directory.objects.get(name="root", owner=self.request.user)
-        context["dirs"] = Directory.objects.filter(
-            parent_directory__id=root_dir.id, owner=self.request.user
-        )
-        context["files"] = File.objects.filter(
-            directory__id=root_dir.id, owner=self.request.user
-        )
-        context["curr_dir"] = root_dir.id
-        return context
 
 
 class PasswordResetView(auth_views.PasswordResetView):

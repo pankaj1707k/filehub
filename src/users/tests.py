@@ -37,7 +37,13 @@ class UserAuthTest(TestCase):
     def test_login_success_redirect(self):
         login_data = {"username": "testuser0", "password": "testing@321"}
         response = self.client.post(self.login_url, login_data, follow=True)
-        self.assertRedirects(response, reverse(settings.LOGIN_REDIRECT_URL))
+        self.assertRedirects(
+            response,
+            reverse(
+                settings.LOGIN_REDIRECT_URL,
+                args=(str(self.testuser.dirs.get(name="root").id),),
+            ),
+        )
 
     def tearDown(self):
         self.client.logout()
@@ -79,7 +85,12 @@ class UserRegisterTest(TestCase):
 
     def test_register_success_redirect(self):
         response = self.client.post(self.register_url, self.testuser, follow=True)
-        self.assertRedirects(response, reverse(settings.LOGIN_REDIRECT_URL))
+        user = User.objects.get(username=self.testuser["username"])
+        root_id = str(user.dirs.get(name="root").id)
+        self.assertRedirects(
+            response,
+            reverse(settings.LOGIN_REDIRECT_URL, args=(root_id,)),
+        )
 
 
 class UserLogoutTest(TestCase):

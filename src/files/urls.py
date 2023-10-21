@@ -7,4 +7,5 @@ urlpatterns = [
     path("file/new/", views.FileCreateView.as_view(), name="create_file"),
     path("dir/children/", views.FileDirListView.as_view(), name="list_children"),
     path("dir/new/", views.DirectoryCreateView.as_view(), name="create_dir"),
+    path("dir/<uuid:id>/", views.DirectoryView.as_view(), name="dir_contents"),
 ]

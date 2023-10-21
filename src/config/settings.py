@@ -133,7 +133,7 @@ AUTHENTICATION_BACKENDS = ["users.backends.AuthBackend"]
 
 LOGIN_URL = "login"
 
-LOGIN_REDIRECT_URL = "dashboard"
+LOGIN_REDIRECT_URL = "dir_contents"
 
 LOGOUT_REDIRECT_URL = "home"
 

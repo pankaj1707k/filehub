@@ -12,6 +12,21 @@ from files.storage import S3
 from users.mixins import AuthenticatedRequestMixin
 
 
+class DirectoryView(AuthenticatedRequestMixin, TemplateView):
+    """
+    Render the contents of a directory for an authenticated user.
+    """
+
+    template_name = "private/dashboard/dashboard.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        arg_dir = Directory.objects.get(id=kwargs.get("id"))
+        context["dirs"] = Directory.objects.filter(parent_directory=arg_dir)
+        context["files"] = File.objects.filter(directory=arg_dir)
+        return context
+
+
 class SignedURLView(AuthenticatedRequestMixin, View):
     """
     Generate a signed URL for client-side object storage access

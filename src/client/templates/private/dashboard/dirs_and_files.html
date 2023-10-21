@@ -1,12 +1,10 @@
 {% load static %}
-<input type="hidden" id="currDir" name="parent_directory" value="{{ curr_dir }}">
 {% for dir in dirs %}
-<div class="file-box" hx-get="/dir/children/?parent_directory={{ dir.id }}" hx-trigger="dblclick"
-    hx-target=".files-boxes" hx-swap="innerHTML" hx-params="none">
+<div class="file-box">
     <i class="fa-solid fa-download"></i>
     <div class="file-box-card-body">
         <h3>D</h3>
-        <p>{{ dir.name }}</p>
+        <a href="{% url 'dir_contents' dir.id %}">{{ dir.name }}</a>
     </div>
     <div class="file-box-card-footer">
         <span>
