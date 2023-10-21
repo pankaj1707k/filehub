@@ -37,7 +37,7 @@ class SignedURLViewTest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.url = reverse("signed-url")
+        cls.url = reverse("signed_url")
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
         cls.user.save()
@@ -89,7 +89,7 @@ class FileCreateUpdateDeleteTest(TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         super().setUpClass()
-        cls.create_url = reverse("create-file")
+        cls.create_url = reverse("create_file")
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
         cls.user.save()

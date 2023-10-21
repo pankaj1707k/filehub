@@ -37,7 +37,7 @@ fileInput.addEventListener("change", uploadHandler);
 async function uploadHandler() {
   var files = fileInput.files;
   for (let i = 0; i < files.length; i++) {
-    let uploadURL = await fetch("/files/get-signed-url/?upload=true");
+    let uploadURL = await fetch("/get-signed-url/?upload=true");
     uploadURL
       .json()
       .then((data) => uploadFile(files[i], data))
@@ -78,7 +78,7 @@ async function uploadFile(file, data) {
  */
 async function sendMetadata(file, data) {
   try {
-    let res = await fetch("/files/file/new", {
+    let res = await fetch("/file/new/", {
       method: "POST",
       body: JSON.stringify({
         id: data.key,
