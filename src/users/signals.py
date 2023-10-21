@@ -4,10 +4,10 @@ from django.dispatch import receiver
 
 from files.models import Directory
 
-User = get_user_model
+User = get_user_model()
 
 
 @receiver(post_save, sender=User)
 def create_root_dir(instance: User, created: bool, *args, **kwargs) -> None:
     if created:
-        Directory.objects.create(name=f"root", owner=instance)
+        Directory.objects.create(name="root", owner=instance)
