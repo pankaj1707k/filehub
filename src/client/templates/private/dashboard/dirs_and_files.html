@@ -1,32 +1,25 @@
-{% load static %}
-{% for dir in dirs %}
+{% load static %} {% for dir in dirs %}
 <div class="file-box">
-    <i class="fa-solid fa-download"></i>
-    <div class="file-box-card-body">
-        <h3>D</h3>
-        <a href="{% url 'dir_contents' dir.id %}">{{ dir.name }}</a>
-    </div>
-    <div class="file-box-card-footer">
-        <span>
-            {{ dir.last_modified|date:"F d, Y" }}
-        </span>
-        <span></span>
-    </div>
+  <i class="fa-solid fa-download"></i>
+  <div class="file-box-card-body">
+    <h3>D</h3>
+    <a href="{% url 'dir_contents' dir.id %}">{{ dir.name }}</a>
+  </div>
+  <div class="file-box-card-footer">
+    <span> {{ dir.last_modified|date:"F d, Y" }} </span>
+    <span></span>
+  </div>
 </div>
-{% endfor %}
-
-{% for file in files %}
+{% endfor %} {% for file in files %}
 <div class="file-box">
-    <i class="fa-solid fa-download"></i>
-    <div class="file-box-card-body">
-        <h3>F</h3>
-        <p>{{ file.name }}</p>
-    </div>
-    <div class="file-box-card-footer">
-        <span>
-            {{ file.uploaded_on|date:"F d, Y" }}
-        </span>
-        <span>{{ file.size }}</span>
-    </div>
+  <i class="fa-solid fa-download"></i>
+  <div class="file-box-card-body">
+    <h3>F</h3>
+    <p>{{ file.name }}</p>
+  </div>
+  <div class="file-box-card-footer">
+    <span> {{ file.uploaded_on|date:"F d, Y" }} </span>
+    <span>{{ file.size }}</span>
+  </div>
 </div>
 {% endfor %}

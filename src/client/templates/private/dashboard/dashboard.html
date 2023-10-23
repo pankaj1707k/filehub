@@ -1,37 +1,42 @@
-{% extends "private/base.html" %}
-{% load static %}
-{% block content %}
+{% extends "private/base.html" %} {% load static %} {% block content %}
 <div class="files-main-content">
-    <div class="files-statistics">
-        <h2>Files Statistics</h2>
-        <!-- repeat following div for all file types -->
-        <div class="box">
-            <div class="file-info">
-                <i class="fa-regular fa-file-pdf"></i>
-                <div>
-                    <p>PDF Files</p>
-                    <span>130</span>
-                </div>
-            </div>
-            <span>6.5GB</span>
+  <div class="files-statistics">
+    <h2>Files Statistics</h2>
+    <!-- repeat following div for all file types -->
+    <div class="box">
+      <div class="file-info">
+        <i class="fa-regular fa-file-pdf"></i>
+        <div>
+          <p>PDF Files</p>
+          <span>130</span>
         </div>
-        <!-- Upload new file -->
-        <input type="file" name="select files" id="file-selector" multiple hidden>
-        <button id="upload-btn">
-            <i class="fa-solid fa-angles-up"></i>Upload
-        </button>
-        <!-- Create directory -->
-        <form hx-post="{% url 'create_dir' %}" hx-trigger="submit" hx-include="#currDir">
-            {% csrf_token %}
-            <input type="text" name="name" placeholder="New folder">
-            <input type="hidden" name="owner" value="{{ request.user.id }}">
-            <button id="dir-btn" type="submit">Create Folder</button>
-        </form>
+      </div>
+      <span>6.5GB</span>
     </div>
-    <div class="files-boxes" hx-get="/dir/children/" hx-trigger="uploaded, newDirCreated from:body" hx-swap="innerHTML"
-        hx-include="#currDir">
-        {% include "private/dashboard/dirs_and_files.html" %}
-    </div>
-    <input type="hidden" id="currDir" name="parent_directory" value="{{ id }}">
+    <!-- Upload new file -->
+    <input type="file" name="select files" id="file-selector" multiple hidden />
+    <button id="upload-btn"><i class="fa-solid fa-angles-up"></i>Upload</button>
+    <!-- Create directory -->
+    <form
+      hx-post="{% url 'create_dir' %}"
+      hx-trigger="submit"
+      hx-include="#currDir"
+    >
+      {% csrf_token %}
+      <input type="text" name="name" placeholder="New folder" />
+      <input type="hidden" name="owner" value="{{ request.user.id }}" />
+      <button id="dir-btn" type="submit">Create Folder</button>
+    </form>
+  </div>
+  <div
+    class="files-boxes"
+    hx-get="/dir/children/"
+    hx-trigger="uploaded, newDirCreated from:body"
+    hx-swap="innerHTML"
+    hx-include="#currDir"
+  >
+    {% include "private/dashboard/dirs_and_files.html" %}
+  </div>
+  <input type="hidden" id="currDir" name="parent_directory" value="{{ id }}" />
 </div>
 {% endblock content %}

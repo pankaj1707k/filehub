@@ -1,18 +1,14 @@
-{% extends "public/base.html" %}
-{% load widget_tweaks %}
-{% block main %}
+{% extends "public/base.html" %} {% load widget_tweaks %} {% block main %}
 <form method="post" action="{% url 'login' %}">
-    {% csrf_token %}
-    <h3>Sign In</h3>
-    <fieldset>
-        <label for="{{ form.username.id_for_label }}">Username/Email:</label>
-        {% render_field form.username %}
-        {{ form.username.errors }}
-        <label for="{{ form.password.id_for_label }}">Password:</label>
-        {% render_field form.password %}
-        {{ form.password.errors }}
-    </fieldset>
-    <button type="submit">Log In</button><br><br>
-    <a href="{% url 'password_reset_request' %}">Forgot Password?</a>
+  {% csrf_token %}
+  <h3>Sign In</h3>
+  <fieldset>
+    <label for="{{ form.username.id_for_label }}">Username/Email:</label>
+    {% render_field form.username %} {{ form.username.errors }}
+    <label for="{{ form.password.id_for_label }}">Password:</label>
+    {% render_field form.password %} {{ form.password.errors }}
+  </fieldset>
+  <button type="submit">Log In</button><br /><br />
+  <a href="{% url 'password_reset_request' %}">Forgot Password?</a>
 </form>
 {% endblock %}

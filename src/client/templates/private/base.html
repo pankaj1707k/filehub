@@ -1,63 +1,60 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{% static 'css/all.min.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&amp;display=swap">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;500&amp;display=swap"
+    />
     <title>fileHub | Dashboard</title>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="page-content">
-        <div class="sidebar">
-            <div class="brand">
-                <i class="fa-solid fa-xmark xmark"></i>
-                <h3>Zana</h3>
-            </div>
-            <ul>
-                <li>
-                    <a href="{% url 'dir_contents' id %}" class="sidebar-link">
-                        <i class="fa-regular fa-chart-bar fa-fw"></i>
-                        <span>My Hub</span>
-                    </a>
-                </li>
-
-                <li>
-                    <a href="{% url 'settings' %}" class="sidebar-link">
-                        <i class="fa-solid fa-gear fa-fw"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-
-            </ul>
+      <div class="sidebar">
+        <div class="brand">
+          <i class="fa-solid fa-xmark xmark"></i>
+          <h3>Zana</h3>
         </div>
-        <main>
-            <div class="header">
-                <i class="fa-solid fa-bars bar-item"></i>
-                <div class="search">
-                    <input type="search" placeholder="Type A Keyword" />
-                </div>
+        <ul>
+          <li>
+            <a href="{% url 'dir_contents' id %}" class="sidebar-link">
+              <i class="fa-regular fa-chart-bar fa-fw"></i>
+              <span>My Hub</span>
+            </a>
+          </li>
+          <li>
+            <a href="{% url 'settings' %}" class="sidebar-link">
+              <i class="fa-solid fa-gear fa-fw"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </div>
 
-                <div class="profile">
-                    <a href="{% url 'logout' %}">Logout</a>
-                    <img src="{% static 'images/avatar.png' %}" alt="No Image" />
-                </div>
-            </div>
-            <div class="main-content">
-                {% block content %} {% endblock %}
-            </div>
-        </main>
+      <main>
+        <div class="header">
+          <i class="fa-solid fa-bars bar-item"></i>
+          <div class="search">
+            <input type="search" placeholder="Type A Keyword" />
+          </div>
+          <div class="profile">
+            <a href="{% url 'logout' %}">Logout</a>
+            <img src="{% static 'images/avatar.png' %}" alt="No Image" />
+          </div>
+        </div>
+        <div class="main-content">{% block content %} {% endblock %}</div>
+      </main>
     </div>
 
     <script src="https://unpkg.com/htmx.org@1.9.6"></script>
     <script src="{% static 'js/script.js' %}"></script>
     <script src="{% static 'js/fileUpload.js' %}"></script>
-</body>
-
+  </body>
 </html>
