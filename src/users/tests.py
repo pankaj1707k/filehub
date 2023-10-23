@@ -1,7 +1,10 @@
 from django.conf import settings
 from django.contrib.auth import get_user, get_user_model
+from django.contrib.auth.forms import PasswordChangeForm
 from django.test import TestCase
 from django.urls import reverse
+
+from users import forms, views
 
 User = get_user_model()
 
@@ -110,6 +113,102 @@ class UserLogoutTest(TestCase):
         self.client.force_login(self.testuser)
         response = self.client.post(self.logout_url)
         self.assertRedirects(response, reverse(settings.LOGOUT_REDIRECT_URL))
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        cls.testuser.delete()
+
+
+class UserUpdateTest(TestCase):
+    """
+    Tests for updating user information.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.testuser = User.objects.create(username="testuser", email="tu@test.com")
+        cls.testuser.set_password("testing@321")
+        cls.testuser.save()
+        cls.url = reverse("user_update")
+        cls.form_class = forms.UserUpdateForm
+        cls.template_name = views.UserUpdateView.template_name
+
+    def setUp(self) -> None:
+        self.client.force_login(self.testuser)
+
+    def test_get_empty_form(self) -> None:
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.template_name)
+        self.assertIn("form", response.context)
+        self.assertIsInstance(response.context["form"], self.form_class)
+        self.assertContains(response, self.testuser.username)
+
+    def test_post_update(self) -> None:
+        post_data = {
+            "username": "testuserupdated",
+            "email": "tu@update.com",
+            "name": "test user",
+        }
+        response = self.client.post(self.url, post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.template_name)
+        self.assertIn("form", response.context)
+        self.assertIsInstance(response.context["form"], self.form_class)
+        for updated_value in post_data.values():
+            self.assertContains(response, updated_value)
+
+    def tearDown(self) -> None:
+        self.client.logout()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        cls.testuser.delete()
+
+
+class PasswordChangeTest(TestCase):
+    """
+    Tests for changing user password.
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.testuser = User.objects.create(username="testuser", email="tu@test.com")
+        cls.testuser.set_password("testing@321")
+        cls.testuser.save()
+        cls.url = reverse("password_update")
+        cls.form_class = PasswordChangeForm
+        cls.template_name = views.PasswordUpdateView.template_name
+
+    def setUp(self) -> None:
+        self.client.force_login(self.testuser)
+
+    def test_get_empty_form(self) -> None:
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.template_name)
+        self.assertIn("form", response.context)
+        self.assertIsInstance(response.context["form"], self.form_class)
+
+    def test_post_update(self) -> None:
+        post_data = {
+            "old_password": "testing@321",
+            "new_password1": "asd@lkj123",
+            "new_password2": "asd@lkj123",
+        }
+        response = self.client.post(self.url, post_data)
+        form = response.context["form"]
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.template_name)
+        self.assertFalse(form.user.check_password(post_data["old_password"]))
+        self.assertTrue(form.user.check_password(post_data["new_password1"]))
+
+    def tearDown(self) -> None:
+        self.client.logout()
 
     @classmethod
     def tearDownClass(cls) -> None:
