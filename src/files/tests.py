@@ -112,3 +112,39 @@ class FileCreateUpdateDeleteTest(TestCase):
     def tearDownClass(cls) -> None:
         super().tearDownClass()
         cls.user.delete()
+
+
+class DirectoryCreateUpdateDeleteTest(TestCase):
+    """
+    Tests for create, update, delete operations for file objects
+    """
+
+    @classmethod
+    def setUpClass(cls) -> None:
+        super().setUpClass()
+        cls.create_url = reverse("create_dir")
+        cls.user = User.objects.create(username="testuser", email="tu@test.com")
+        cls.user.set_password("testing123")
+        cls.user.save()
+
+    def setUp(self) -> None:
+        self.client.force_login(self.user)
+
+    def test_create_directory(self) -> None:
+        root_dir_id = str(Directory.objects.get(name="root", owner=self.user).id)
+        post_data = {
+            "name": "testdir",
+            "parent_directory": root_dir_id,
+            "owner": self.user.id,
+        }
+        response = self.client.post(self.create_url, post_data)
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(response.has_header("HX-Trigger"))
+
+    def tearDown(self) -> None:
+        self.client.logout()
+
+    @classmethod
+    def tearDownClass(cls) -> None:
+        super().tearDownClass()
+        cls.user.delete()
