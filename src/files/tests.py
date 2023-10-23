@@ -16,8 +16,7 @@ class S3Test(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.storage_client = S3()
         cls.key = str(uuid4())
 
@@ -35,8 +34,7 @@ class SignedURLViewTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.url = reverse("signed_url")
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
@@ -75,11 +73,6 @@ class SignedURLViewTest(TestCase):
     def tearDown(self) -> None:
         self.client.logout()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        cls.user.delete()
-
 
 class FileCreateUpdateDeleteTest(TestCase):
     """
@@ -87,8 +80,7 @@ class FileCreateUpdateDeleteTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.create_url = reverse("create_file")
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
@@ -108,11 +100,6 @@ class FileCreateUpdateDeleteTest(TestCase):
     def tearDown(self) -> None:
         self.client.logout()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        cls.user.delete()
-
 
 class DirectoryCreateUpdateDeleteTest(TestCase):
     """
@@ -120,8 +107,7 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.create_url = reverse("create_dir")
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
@@ -143,8 +129,3 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
 
     def tearDown(self) -> None:
         self.client.logout()
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        cls.user.delete()

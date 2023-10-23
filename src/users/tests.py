@@ -15,8 +15,7 @@ class UserAuthTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.testuser = User.objects.create(username="testuser0", email="tu0@test.com")
         cls.testuser.set_password("testing@321")
         cls.testuser.save()
@@ -51,11 +50,6 @@ class UserAuthTest(TestCase):
     def tearDown(self):
         self.client.logout()
 
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-        cls.testuser.delete()
-
 
 class UserRegisterTest(TestCase):
     """
@@ -63,8 +57,7 @@ class UserRegisterTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.register_url = reverse("register")
         cls.register_template = "public/register.html"
         cls.testuser = {
@@ -102,8 +95,7 @@ class UserLogoutTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.testuser = User.objects.create(username="testuser", email="tu@test.com")
         cls.testuser.set_password("testing@321")
         cls.testuser.save()
@@ -114,11 +106,6 @@ class UserLogoutTest(TestCase):
         response = self.client.post(self.logout_url)
         self.assertRedirects(response, reverse(settings.LOGOUT_REDIRECT_URL))
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        cls.testuser.delete()
-
 
 class UserUpdateTest(TestCase):
     """
@@ -126,8 +113,7 @@ class UserUpdateTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.testuser = User.objects.create(username="testuser", email="tu@test.com")
         cls.testuser.set_password("testing@321")
         cls.testuser.save()
@@ -163,11 +149,6 @@ class UserUpdateTest(TestCase):
     def tearDown(self) -> None:
         self.client.logout()
 
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        cls.testuser.delete()
-
 
 class PasswordChangeTest(TestCase):
     """
@@ -175,8 +156,7 @@ class PasswordChangeTest(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls) -> None:
-        super().setUpClass()
+    def setUpTestData(cls) -> None:
         cls.testuser = User.objects.create(username="testuser", email="tu@test.com")
         cls.testuser.set_password("testing@321")
         cls.testuser.save()
@@ -209,8 +189,3 @@ class PasswordChangeTest(TestCase):
 
     def tearDown(self) -> None:
         self.client.logout()
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        super().tearDownClass()
-        cls.testuser.delete()
