@@ -1,0 +1,11 @@
+{% if curr_dir.name != "root" %}
+<h3 id="dirTitle">{{ curr_dir.name }}</h3>
+<button
+  type="button"
+  class="btn btn-primary ms-4"
+  data-bs-toggle="modal"
+  data-bs-target="#renameModal"
+>
+  Edit
+</button>
+{% endif %}

@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from files import views
 from files.models import Directory, File
 from files.storage import S3
 
@@ -109,6 +110,7 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.create_url = reverse("create_dir")
+        cls.update_response_template = views.DirectoryUpdateView.template_name
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
         cls.user.save()
@@ -126,6 +128,26 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         response = self.client.post(self.create_url, post_data)
         self.assertEqual(response.status_code, 204)
         self.assertTrue(response.has_header("HX-Trigger"))
+
+    def test_update_directory(self) -> None:
+        dir = Directory.objects.create(
+            name="testdir",
+            parent_directory=Directory.objects.get(name="root", owner=self.user),
+            owner=self.user,
+        )
+        update_url = reverse("update_dir", args=(dir.id,))
+        post_data = {"name": "testdirupdated"}
+        response = self.client.post(update_url, post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, self.update_response_template)
+        self.assertContains(response, response.context["curr_dir"].name)
+
+    def test_root_update_not_allowed(self) -> None:
+        root = Directory.objects.get(name="root", owner=self.user)
+        update_url = reverse("update_dir", args=(root.id,))
+        post_data = {"name": "testdirupdated"}
+        response = self.client.post(update_url, post_data)
+        self.assertEqual(response.status_code, 403)
 
     def tearDown(self) -> None:
         self.client.logout()

@@ -1,4 +1,5 @@
 {% extends "private/base.html" %} {% load static %} {% block content %}
+<div class="d-flex">{% include "private/dashboard/dir_title.html" %}</div>
 <div class="files-main-content">
   <div class="files-statistics">
     <h2>Files Statistics</h2>
@@ -30,7 +31,7 @@
   </div>
   <div
     class="files-boxes"
-    hx-get="/dir/children/"
+    hx-get="/d/children/"
     hx-trigger="uploaded, newDirCreated from:body"
     hx-swap="innerHTML"
     hx-include="#currDir"
@@ -38,5 +39,53 @@
     {% include "private/dashboard/dirs_and_files.html" %}
   </div>
   <input type="hidden" id="currDir" name="parent_directory" value="{{ id }}" />
+</div>
+<div
+  class="modal fade"
+  id="renameModal"
+  tabindex="-1"
+  aria-labelledby="renameModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-decoration-none" id="renameModalLabel">
+          Rename Folder
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          id="renameForm"
+          hx-post="{% url 'update_dir' id %}"
+          hx-trigger="submit"
+          hx-target="#dirTitle"
+          hx-swap="outerHTML"
+        >
+          {% csrf_token %}
+          <input
+            class="form-control"
+            type="text"
+            name="name"
+            placeholder="folder name"
+          />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" form="renameForm" class="btn btn-primary">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock content %}

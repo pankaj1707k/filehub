@@ -13,3 +13,9 @@ class DirectoryForm(ModelForm):
     class Meta:
         model = Directory
         fields = "__all__"
+
+
+class DirectoryUpdateForm(ModelForm):
+    class Meta:
+        model = Directory
+        fields = ["name"]

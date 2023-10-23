@@ -3,10 +3,11 @@ from typing import Any
 from uuid import uuid4
 
 from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
-from files.forms import DirectoryForm, FileForm
+from files.forms import DirectoryForm, DirectoryUpdateForm, FileForm
 from files.models import Directory, File
 from files.storage import S3
 from users.mixins import AuthenticatedRequestMixin
@@ -24,6 +25,7 @@ class DirectoryView(AuthenticatedRequestMixin, TemplateView):
         arg_dir = Directory.objects.get(id=kwargs.get("id"))
         context["dirs"] = Directory.objects.filter(parent_directory=arg_dir)
         context["files"] = File.objects.filter(directory=arg_dir)
+        context["curr_dir"] = arg_dir
         return context
 
 
@@ -86,13 +88,14 @@ class FileDirListView(AuthenticatedRequestMixin, TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         dir_id = self.request.GET.get("parent_directory")
+        arg_dir = Directory.objects.get(id=dir_id)
         context["dirs"] = Directory.objects.filter(
-            parent_directory__id=dir_id, owner=self.request.user
+            parent_directory=arg_dir, owner=self.request.user
         )
         context["files"] = File.objects.filter(
-            directory__id=dir_id, owner=self.request.user
+            directory=arg_dir, owner=self.request.user
         )
-        context["curr_dir"] = dir_id
+        context["curr_dir"] = arg_dir
         return context
 
 
@@ -110,4 +113,25 @@ class DirectoryCreateView(AuthenticatedRequestMixin, View):
             response = HttpResponse(status=204)
             response["HX-Trigger"] = "newDirCreated"
             return response
+        return JsonResponse(form.errors, status=400)
+
+
+class DirectoryUpdateView(AuthenticatedRequestMixin, View):
+    """
+    Rename a directory.
+    """
+
+    http_method_names = ["post"]
+    template_name = "private/dashboard/dir_title.html"
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        dir = Directory.objects.get(id=kwargs.get("id"))
+        # do not allow root directory to be renamed
+        if dir.name == "root":
+            return HttpResponse(status=403)
+        form = DirectoryUpdateForm(request.POST, instance=dir)
+        if form.is_valid():
+            form.save()
+            context = {"curr_dir": form.instance}
+            return render(request, self.template_name, context)
         return JsonResponse(form.errors, status=400)

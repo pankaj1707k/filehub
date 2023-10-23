@@ -812,3 +812,6 @@ main .main-content .title::after {
   justify-content: space-between;
   align-items: center;
 }
+.modal-content {
+  background-color: var(--bg-color);
+}
