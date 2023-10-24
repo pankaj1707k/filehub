@@ -33,13 +33,13 @@ jobs:
         mv mc /usr/local/bin/mc
     - name: Start minio server
       run: |
+        mkdir -p ~/minio
+        minio server ~/minio --console-address :9090
         mc alias set test http://127.0.0.1:9000 minioadmin minioadmin
         mc admin user svcacct add                      \
           --access-key "${{ secrets.S3_ACCESS_KEY }}"  \
           --secret-key "${{ secrets.S3_SECRET_KEY }}"  \
           test minioadmin
-        mkdir -p ~/minio
-        minio server ~/minio --console-address :9090
     - name: Run Tests
       run: |
         python src/manage.py test --parallel
