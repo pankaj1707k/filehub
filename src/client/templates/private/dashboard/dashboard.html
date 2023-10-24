@@ -31,7 +31,7 @@
   </div>
   <div
     class="files-boxes"
-    hx-get="/d/children/"
+    hx-get="{% url 'list_contents' %}"
     hx-trigger="uploaded, newDirCreated from:body"
     hx-swap="innerHTML"
     hx-include="#currDir"
