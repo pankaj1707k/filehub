@@ -46,7 +46,8 @@ jobs:
           test minioadmin
     - name: Run Tests
       run: |
-        python src/manage.py test --parallel
+        cd src
+        python manage.py test --parallel
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
         DEBUG: ${{ secrets.DEBUG }}
