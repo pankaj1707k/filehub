@@ -111,7 +111,7 @@ class DirectoryCreateView(AuthenticatedRequestMixin, View):
         if form.is_valid():
             form.save()
             response = HttpResponse(status=204)
-            response["HX-Trigger"] = "newDirCreated"
+            response["HX-Trigger"] = "contentChange"
             return response
         return JsonResponse(form.errors, status=400)
 
@@ -151,5 +151,5 @@ class DirectoryDeleteView(AuthenticatedRequestMixin, View):
             return HttpResponse(status=403)
         dir.delete()
         response = HttpResponse(status=204)
-        response["HX-Trigger"] = "deleted"
+        response["HX-Trigger"] = "contentChange"
         return response

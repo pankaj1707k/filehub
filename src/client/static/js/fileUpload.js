@@ -43,7 +43,7 @@ async function uploadHandler() {
       .then((data) => uploadFile(files[i], data))
       .then((data) => sendMetadata(files[i], data))
       .then(() => {
-        htmx.trigger(".files-boxes", "uploaded");
+        htmx.trigger("body", "contentChange");
       });
   }
 }
@@ -78,7 +78,7 @@ async function uploadFile(file, data) {
  */
 async function sendMetadata(file, data) {
   try {
-    let res = await fetch("/file/new/", {
+    let res = await fetch("/f/new/", {
       method: "POST",
       body: JSON.stringify({
         id: data.key,
