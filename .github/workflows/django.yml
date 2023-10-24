@@ -34,7 +34,7 @@ jobs:
     - name: Start minio server
       run: |
         mkdir -p ~/minio
-        minio server ~/minio --console-address :9090
+        minio server ~/minio --console-address :9090 &;
     - name: Wait for minio server to be running
       uses: actions/github-script@v6
       with:
