@@ -75,6 +75,40 @@ class SignedURLViewTest(TestCase):
         self.client.logout()
 
 
+class FileDeleteSignalTest(TestCase):
+    """
+    When a file entry is deleted from the database, the corresponding file
+    must be autodeleted from the object storage.
+    """
+
+    def setUp(self) -> None:
+        self.user = User.objects.create(username="testuser", email="tu@test.com")
+        self.user.set_password("testing123")
+        self.user.save()
+        self.file = File.objects.create(
+            name="testfile",
+            type="text/plain",
+            size=1024,
+            directory=Directory.objects.get(name="root", owner=self.user),
+            owner=self.user,
+        )
+        self.storage_client = S3()
+        upload_url = self.storage_client.get_upload_url(str(self.file.id), 5)
+        urllib3.request(
+            "PUT",
+            upload_url,
+            body="someplaintextdata",
+            headers={"Content-Type": "text/plain"},
+        )
+
+    def test_file_delete_signal(self) -> None:
+        key = str(self.file.id)
+        download_url = self.storage_client.get_download_url(key, 5)
+        self.file.delete()
+        response = urllib3.request("GET", download_url)
+        self.assertEqual(response.status, 404)
+
+
 class FileCreateUpdateDeleteTest(TestCase):
     """
     Tests for create, update, delete operations for file objects
