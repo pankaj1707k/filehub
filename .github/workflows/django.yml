@@ -47,3 +47,13 @@ jobs:
     - name: Run Tests
       run: |
         python src/manage.py test --parallel
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        DEBUG: ${{ secrets.DEBUG }}
+        EMAIL_HOST_USER: ${{ secrets.EMAIL_HOST_USER }}
+        EMAIL_HOST_PASSWORD: ${{ secrets.EMAIL_HOST_PASSWORD }}
+        S3_ENDPOINT_URL: ${{ secrets.S3_ENDPOINT_URL }}
+        S3_ACCESS_KEY: ${{ secrets.S3_ACCESS_KEY }}
+        S3_SECRET_KEY: ${{ secrets.S3_SECRET_KEY }}
+        S3_BUCKET: ${{ secrets.S3_BUCKET }}
+        S3_SECURE_CONNECTION: ${{ secrets.S3_SECURE_CONNECTION }}
