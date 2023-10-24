@@ -70,10 +70,13 @@ class FileCreateView(AuthenticatedRequestMixin, View):
     http_method_names = ["post"]
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        file_form = FileForm(json.loads(request.body))
+        request_data = json.loads(request.body)
+        file_form = FileForm(request_data)
         if file_form.is_valid():
-            file_form.instance.owner = request.user
-            file_form.save()
+            data = file_form.cleaned_data
+            data["owner"] = request.user
+            data["id"] = request_data["id"]
+            File.objects.create(**data)
             return HttpResponse(status=201)
         return JsonResponse(file_form.errors, status=400)
 

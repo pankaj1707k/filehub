@@ -91,12 +91,17 @@ class FileCreateUpdateDeleteTest(TestCase):
         self.client.force_login(self.user)
 
     def test_create_file(self) -> None:
+        file_data = {
+            "id": uuid4(),
+            "name": "testfile",
+            "type": "text/plain",
+            "size": 100,
+        }
         response = self.client.post(
-            self.create_url,
-            {"id": uuid4(), "name": "testfile", "type": "text/plain", "size": 100},
-            content_type="application/json",
+            self.create_url, file_data, content_type="application/json"
         )
         self.assertEqual(response.status_code, 201)
+        self.assertTrue(File.objects.filter(**file_data).exists())
 
     def tearDown(self) -> None:
         self.client.logout()
