@@ -32,7 +32,7 @@
   <div
     class="files-boxes"
     hx-get="{% url 'list_contents' %}"
-    hx-trigger="uploaded, newDirCreated from:body"
+    hx-trigger="uploaded, newDirCreated from:body, deleted"
     hx-swap="innerHTML"
     hx-include="#currDir"
   >

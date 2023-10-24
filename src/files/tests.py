@@ -149,5 +149,22 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         response = self.client.post(update_url, post_data)
         self.assertEqual(response.status_code, 403)
 
+    def test_delete(self) -> None:
+        dir = Directory.objects.create(
+            name="testdir",
+            parent_directory=Directory.objects.get(name="root", owner=self.user),
+            owner=self.user,
+        )
+        delete_url = reverse("delete_dir", args=(dir.id,))
+        response = self.client.post(delete_url)
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(response.has_header("HX-Trigger"))
+
+    def test_root_delete_not_allowed(self) -> None:
+        root = Directory.objects.get(name="root", owner=self.user)
+        update_url = reverse("delete_dir", args=(root.id,))
+        response = self.client.post(update_url)
+        self.assertEqual(response.status_code, 403)
+
     def tearDown(self) -> None:
         self.client.logout()

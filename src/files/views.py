@@ -135,3 +135,21 @@ class DirectoryUpdateView(AuthenticatedRequestMixin, View):
             context = {"curr_dir": form.instance}
             return render(request, self.template_name, context)
         return JsonResponse(form.errors, status=400)
+
+
+class DirectoryDeleteView(AuthenticatedRequestMixin, View):
+    """
+    Delete a directory and trigger a component reload.
+    """
+
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        dir = Directory.objects.get(id=kwargs.get("id"))
+        # do not allow deletion of root directory
+        if dir.name == "root":
+            return HttpResponse(status=403)
+        dir.delete()
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "deleted"
+        return response

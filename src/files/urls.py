@@ -9,4 +9,5 @@ urlpatterns = [
     path("d/new/", views.DirectoryCreateView.as_view(), name="create_dir"),
     path("d/<uuid:id>/", views.DirectoryView.as_view(), name="dir_contents"),
     path("d/<uuid:id>/update/", views.DirectoryUpdateView.as_view(), name="update_dir"),
+    path("d/<uuid:id>/delete/", views.DirectoryDeleteView.as_view(), name="delete_dir"),
 ]

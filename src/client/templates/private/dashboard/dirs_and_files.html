@@ -7,7 +7,14 @@
   </div>
   <div class="file-box-card-footer">
     <span> {{ dir.last_modified|date:"F d, Y" }} </span>
-    <span></span>
+    <button
+      class="btn btn-danger"
+      hx-post="{% url 'delete_dir' dir.id %}"
+      hx-trigger="click"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    >
+      <i class="fa-solid fa-trash"></i>
+    </button>
   </div>
 </div>
 {% endfor %} {% for file in files %}
