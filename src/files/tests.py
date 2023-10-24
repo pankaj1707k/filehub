@@ -76,7 +76,7 @@ class SignedURLViewTest(TestCase):
         self.client.logout()
 
 
-class FileDeleteSignalTest(TestCase):
+class FileDeleteTest(TestCase):
     """
     When a file entry is deleted from the database, the corresponding file
     must be autodeleted from the object storage.
@@ -101,18 +101,22 @@ class FileDeleteSignalTest(TestCase):
             body="someplaintextdata",
             headers={"Content-Type": "text/plain"},
         )
+        self.delete_url = reverse("delete_file", args=(self.file.id,))
+        self.client.force_login(self.user)
 
-    def test_file_delete_signal(self) -> None:
+    def test_file_delete(self) -> None:
         key = str(self.file.id)
         download_url = self.storage_client.get_download_url(key, 5)
-        self.file.delete()
-        response = urllib3.request("GET", download_url)
-        self.assertEqual(response.status, 404)
+        response = self.client.post(self.delete_url)
+        storage_response = urllib3.request("GET", download_url)
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(response.has_header("HX-Trigger"))
+        self.assertEqual(storage_response.status, 404)
 
 
-class FileCreateUpdateDeleteTest(TestCase):
+class FileCreateTest(TestCase):
     """
-    Tests for create, update, delete operations for file objects
+    Tests for file creation.
     """
 
     @classmethod
@@ -137,19 +141,6 @@ class FileCreateUpdateDeleteTest(TestCase):
         )
         self.assertEqual(response.status_code, 201)
         self.assertTrue(File.objects.filter(**file_data).exists())
-
-    def test_delete(self) -> None:
-        file = File.objects.create(
-            name="testfile",
-            type="text/plain",
-            size=1024,
-            directory=Directory.objects.get(name="root", owner=self.user),
-            owner=self.user,
-        )
-        delete_url = reverse("delete_file", args=(file.id,))
-        response = self.client.post(delete_url)
-        self.assertEqual(response.status_code, 204)
-        self.assertTrue(response.has_header("HX-Trigger"))
 
     def tearDown(self) -> None:
         self.client.logout()
