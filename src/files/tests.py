@@ -1,5 +1,6 @@
 from uuid import uuid4
 
+import urllib3
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
@@ -136,6 +137,19 @@ class FileCreateUpdateDeleteTest(TestCase):
         )
         self.assertEqual(response.status_code, 201)
         self.assertTrue(File.objects.filter(**file_data).exists())
+
+    def test_delete(self) -> None:
+        file = File.objects.create(
+            name="testfile",
+            type="text/plain",
+            size=1024,
+            directory=Directory.objects.get(name="root", owner=self.user),
+            owner=self.user,
+        )
+        delete_url = reverse("delete_file", args=(file.id,))
+        response = self.client.post(delete_url)
+        self.assertEqual(response.status_code, 204)
+        self.assertTrue(response.has_header("HX-Trigger"))
 
     def tearDown(self) -> None:
         self.client.logout()

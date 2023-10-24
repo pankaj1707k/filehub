@@ -81,6 +81,21 @@ class FileCreateView(AuthenticatedRequestMixin, View):
         return JsonResponse(file_form.errors, status=400)
 
 
+class FileDeleteView(AuthenticatedRequestMixin, View):
+    """
+    Delete a file and trigger a component reload.
+    """
+
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        file = File.objects.get(id=kwargs.get("id"))
+        file.delete()
+        response = HttpResponse(status=204)
+        response["HX-Trigger"] = "contentChange"
+        return response
+
+
 class FileDirListView(AuthenticatedRequestMixin, TemplateView):
     """
     Return rendered template for file and directory list.
