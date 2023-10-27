@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.views import View
 from django.views.generic import TemplateView
 
-from files.forms import DirectoryForm, DirectoryUpdateForm, FileForm
+from files import forms
 from files.models import Directory, File
 from files.storage import S3
 from users.mixins import AuthenticatedRequestMixin
@@ -71,7 +71,7 @@ class FileCreateView(AuthenticatedRequestMixin, View):
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         request_data = json.loads(request.body)
-        file_form = FileForm(request_data)
+        file_form = forms.FileForm(request_data)
         if file_form.is_valid():
             data = file_form.cleaned_data
             data["owner"] = request.user
@@ -79,6 +79,36 @@ class FileCreateView(AuthenticatedRequestMixin, View):
             File.objects.create(**data)
             return HttpResponse(status=201)
         return JsonResponse(file_form.errors, status=400)
+
+
+class FileDetailView(AuthenticatedRequestMixin, TemplateView):
+    """
+    Render the details of a file.
+    """
+
+    template_name = "private/dashboard/file_detail.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        file = File.objects.get(id=kwargs.get("id"))
+        context["file"] = file
+        return context
+
+
+class FileUpdateView(AuthenticatedRequestMixin, View):
+    """
+    Rename a file.
+    """
+
+    http_method_names = ["post"]
+
+    def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        file = File.objects.get(id=kwargs.get("id"))
+        form = forms.FileUpdateForm(request.POST, instance=file)
+        if form.is_valid():
+            form.save()
+            return HttpResponse(form.instance.name, status=200)
+        return JsonResponse(form.errors, status=400)
 
 
 class FileDeleteView(AuthenticatedRequestMixin, View):
@@ -125,7 +155,7 @@ class DirectoryCreateView(AuthenticatedRequestMixin, View):
     http_method_names = ["post"]
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
-        form = DirectoryForm(request.POST)
+        form = forms.DirectoryForm(request.POST)
         if form.is_valid():
             form.save()
             response = HttpResponse(status=204)
@@ -147,7 +177,7 @@ class DirectoryUpdateView(AuthenticatedRequestMixin, View):
         # do not allow root directory to be renamed
         if dir.name == "root":
             return HttpResponse(status=403)
-        form = DirectoryUpdateForm(request.POST, instance=dir)
+        form = forms.DirectoryUpdateForm(request.POST, instance=dir)
         if form.is_valid():
             form.save()
             context = {"curr_dir": form.instance}

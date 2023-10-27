@@ -9,6 +9,12 @@ class FileForm(ModelForm):
         exclude = ["owner"]
 
 
+class FileUpdateForm(ModelForm):
+    class Meta:
+        model = File
+        fields = ["name"]
+
+
 class DirectoryForm(ModelForm):
     class Meta:
         model = Directory

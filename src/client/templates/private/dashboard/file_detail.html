@@ -1,0 +1,69 @@
+{% extends "private/base.html" %} {% block content %}
+<div class="file-detail-container">
+  <div class="file-thumbnail"><h1>F</h1></div>
+  <div class="file-detail">
+    <p id="fileName">{{ file.name }}</p>
+    <p>Uploaded on: {{ file.uploaded_on }}</p>
+    <p>Size: {{ file.size }}</p>
+    <p>Type: {{ file.type }}</p>
+  </div>
+  <div class="file-operations">
+    <button class="btn btn-primary">Download</button>
+    <button
+      class="btn btn-secondary"
+      data-bs-toggle="modal"
+      data-bs-target="#renameModal"
+    >
+      Rename
+    </button>
+  </div>
+</div>
+<div
+  class="modal fade"
+  id="renameModal"
+  tabindex="-1"
+  aria-labelledby="renameModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5 text-decoration-none" id="renameModalLabel">
+          Rename File
+        </h1>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form
+          id="renameForm"
+          hx-post="{% url 'update_file' id %}"
+          hx-trigger="submit"
+          hx-target="#fileName"
+          hx-swap="innerHTML"
+        >
+          {% csrf_token %}
+          <input
+            class="form-control"
+            type="text"
+            name="name"
+            placeholder="file name"
+          />
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button type="submit" form="renameForm" class="btn btn-primary">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

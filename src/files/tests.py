@@ -146,6 +146,39 @@ class FileCreateTest(TestCase):
         self.client.logout()
 
 
+class FileUpdateTest(TestCase):
+    """
+    Tests for file update.
+    """
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.user = User.objects.create(username="testuser", email="tu@test.com")
+        cls.user.set_password("testing123")
+        cls.user.save()
+        cls.file = File.objects.create(
+            name="testfile",
+            type="text/plain",
+            size=1024,
+            directory=Directory.objects.get(name="root", owner=cls.user),
+            owner=cls.user,
+        )
+        cls.update_url = reverse("update_file", args=(cls.file.id,))
+
+    def setUp(self) -> None:
+        self.client.force_login(self.user)
+
+    def test_update_file(self) -> None:
+        post_data = {"name": "testfileupdated"}
+        response = self.client.post(self.update_url, post_data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, post_data["name"])
+        self.assertEqual(File.objects.get(id=self.file.id).name, post_data["name"])
+
+    def tearDown(self) -> None:
+        self.client.logout()
+
+
 class DirectoryCreateUpdateDeleteTest(TestCase):
     """
     Tests for create, update, delete operations for file objects

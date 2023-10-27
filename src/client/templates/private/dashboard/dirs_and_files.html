@@ -22,7 +22,7 @@
   <i class="fa-solid fa-download"></i>
   <div class="file-box-card-body">
     <h3>F</h3>
-    <p>{{ file.name }}</p>
+    <a href="{% url 'detail_file' file.id %}">{{ file.name }}</a>
   </div>
   <div class="file-box-card-footer">
     <span> {{ file.uploaded_on|date:"F d, Y" }} </span>
