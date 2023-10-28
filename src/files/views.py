@@ -26,6 +26,7 @@ class DirectoryView(AuthenticatedRequestMixin, TemplateView):
         context["dirs"] = Directory.objects.filter(parent_directory=arg_dir)
         context["files"] = File.objects.filter(directory=arg_dir)
         context["curr_dir"] = arg_dir
+        context["root"] = Directory.objects.get(name="root", owner=self.request.user)
         return context
 
 
@@ -92,6 +93,7 @@ class FileDetailView(AuthenticatedRequestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         file = File.objects.get(id=kwargs.get("id"))
         context["file"] = file
+        context["root"] = Directory.objects.get(name="root", owner=self.request.user)
         return context
 
 

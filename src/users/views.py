@@ -97,6 +97,11 @@ class SettingsView(AuthenticatedRequestMixin, TemplateView):
 
     template_name = "private/settings/settings.html"
 
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context["root"] = self.request.user.dirs.get(name="root")
+        return context
+
 
 class UserUpdateView(AuthenticatedRequestMixin, View):
     """
