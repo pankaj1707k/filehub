@@ -1,4 +1,4 @@
-{% extends "private/base.html" %} {% block content %}
+{% extends "private/base.html" %} {% load static %} {% block content %}
 <div class="file-detail-container">
   <div class="file-thumbnail"><h1>F</h1></div>
   <div class="file-detail">
@@ -8,7 +8,7 @@
     <p>Type: {{ file.type }}</p>
   </div>
   <div class="file-operations">
-    <button class="btn btn-primary">Download</button>
+    <button class="btn btn-primary" id="download-btn">Download</button>
     <button
       class="btn btn-secondary"
       data-bs-toggle="modal"
@@ -66,4 +66,6 @@
     </div>
   </div>
 </div>
+<input type="hidden" name="fileID" value="{{ file.id }}" />
+<script src="{% static 'js/fileDownload.js' %}"></script>
 {% endblock content %}
