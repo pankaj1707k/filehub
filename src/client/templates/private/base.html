@@ -47,9 +47,7 @@
       <main>
         <div class="header">
           <i class="fa-solid fa-bars bar-item"></i>
-          <div class="search">
-            <input type="search" placeholder="Type A Keyword" />
-          </div>
+          {% block search_bar %} {% endblock %}
           <div class="profile">
             <a href="{% url 'logout' %}">Logout</a>
             <img src="{% static 'images/avatar.png' %}" alt="No Image" />

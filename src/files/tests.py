@@ -245,3 +245,54 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
 
     def tearDown(self) -> None:
         self.client.logout()
+
+
+class SearchContentTest(TestCase):
+    """
+    Tests for search functionality.
+    """
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.search_url = reverse("search_content")
+        cls.user = User.objects.create(username="testuser", email="tu@test.com")
+        cls.user.set_password("testing123")
+        cls.user.save()
+        root_dir = Directory.objects.get(name="root", owner=cls.user)
+        cls.test_dir = Directory.objects.create(
+            name="testdir", parent_directory=root_dir, owner=cls.user
+        )
+        cls.test_file = File.objects.create(
+            name="testfile",
+            type="text/plain",
+            size=1024,
+            directory=root_dir,
+            owner=cls.user,
+        )
+
+    def setUp(self) -> None:
+        self.client.force_login(self.user)
+
+    def test_query_param_missing(self) -> None:
+        response = self.client.get(self.search_url)
+        self.assertEqual(response.status_code, 400)
+
+    def test_query_empty(self) -> None:
+        response = self.client.get(self.search_url, {"q": ""})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.test_file.name)
+        self.assertContains(response, self.test_dir.name)
+
+    def test_search_with_full_name(self) -> None:
+        response = self.client.get(self.search_url, {"q": "testfile"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.test_file.name)
+
+    def test_search_with_partial_name(self) -> None:
+        response = self.client.get(self.search_url, {"q": "test"})
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, self.test_file.name)
+        self.assertContains(response, self.test_dir.name)
+
+    def tearDown(self) -> None:
+        self.client.logout()

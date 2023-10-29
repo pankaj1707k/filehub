@@ -1,4 +1,16 @@
-{% extends "private/base.html" %} {% load static %} {% block content %}
+{% extends "private/base.html" %} {% load static %} {% block search_bar %}
+<div class="search">
+  <input
+    type="search"
+    name="q"
+    hx-get="{% url 'search_content' %}"
+    hx-trigger="keyup changed delay:500ms"
+    hx-target=".files-boxes"
+    hx-swap="innerHTML"
+    placeholder="Start typing..."
+  />
+</div>
+{% endblock search_bar %} {% block content %}
 <div class="d-flex">{% include "private/dashboard/dir_title.html" %}</div>
 <div class="files-main-content">
   <div class="files-statistics">

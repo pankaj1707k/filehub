@@ -203,3 +203,22 @@ class DirectoryDeleteView(AuthenticatedRequestMixin, View):
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "contentChange"
         return response
+
+
+class SearchView(AuthenticatedRequestMixin, TemplateView):
+    """
+    Search for files and directories.
+    """
+
+    template_name = "private/dashboard/dirs_and_files.html"
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        query = request.GET.get("q")
+        if query is None:
+            return JsonResponse({"error": "query not provided"}, status=400)
+        filter_params = {"name__icontains": query, "owner": request.user}
+        dirs = list(Directory.objects.filter(**filter_params).exclude(name="root"))
+        files = list(File.objects.filter(**filter_params))
+        context = super().get_context_data(**kwargs)
+        context.update({"dirs": dirs, "files": files})
+        return render(request, self.template_name, context)
