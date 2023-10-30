@@ -1,22 +1,29 @@
 {% extends "private/base.html" %} {% load static %} {% block content %}
-<div class="file-detail-container">
-  <div class="file-thumbnail"><h1>F</h1></div>
-  <div class="file-detail">
+
+<div class="file-details" >
+  <div class="file-title" style="text-align: center; font-size: 2rem; color: #c8caff; margin-top: 2%;">
     <p id="fileName">{{ file.name }}</p>
+  </div>
+  <div class="file-detail-container" style="margin-top: 10%; display: flex; flex-direction: row;">
+  <div class="file-thumbnail" style="flex: 50%; font-size: 9rem; text-align:center;padding-top: 0;padding-bottom: 0;"><i class="fa-regular fa-file-pdf"></i></div>
+  <div class="file-detail" style="font-size: 1.4rem;flex: 50%;">
+    
     <p>Uploaded on: {{ file.uploaded_on }}</p>
     <p>Size: {{ file.size }}</p>
     <p>Type: {{ file.type }}</p>
+    <div class="file-operations" >
+      <button class="btn btn-primary" id="download-btn" style="background-color: #5b5fbb !important; border: none !important; margin-right: 2rem; margin-top: 1rem ; font-size: 1.4rem;">Download</button>
+      <button
+        class="btn btn-secondary"
+        data-bs-toggle="modal"
+        data-bs-target="#renameModal"
+        style="background-color: #5b5fbb !important; border: none !important; font-size: 1.4rem; margin-top: 1rem ;"
+      >
+        Rename
+      </button>
+    </div>
   </div>
-  <div class="file-operations">
-    <button class="btn btn-primary" id="download-btn">Download</button>
-    <button
-      class="btn btn-secondary"
-      data-bs-toggle="modal"
-      data-bs-target="#renameModal"
-    >
-      Rename
-    </button>
-  </div>
+</div>
 </div>
 <div
   class="modal fade"

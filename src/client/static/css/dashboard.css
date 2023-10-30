@@ -614,9 +614,8 @@ main .main-content .title::after {
   }
 }
 .files-main-content .files-statistics {
-  min-width: 250px;
-  min-height: 420px;
-  max-height: 420px;
+  height: 24rem;
+  width: 24rem;
   padding: var(--secondary-padding);
   background-color: var(--base-color);
   border-radius: var(--first-radius);
@@ -677,7 +676,7 @@ main .main-content .title::after {
 .main-content .box .general-info-section2 form input[type="submit"],
 .files-main-content .files-statistics form #dir-btn {
   background-color: var(--blue-color);
-  color: var(--base-color);
+  color: white;
   font-size: 1rem;
   padding: calc(var(--fourth-padding) - 2px) var(--fourth-padding);
   border-radius: var(--secondary-radius);
@@ -759,7 +758,8 @@ main .main-content .title::after {
   flex-wrap: wrap;
 }
 .files-main-content .files-boxes .file-box {
-  min-width: 220px;
+  min-width: 12rem;
+  max-height: 12rem;
   flex: 1;
   padding: var(--fourth-padding) var(--third-padding);
   background-color: var(--base-color);

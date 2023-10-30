@@ -101,3 +101,17 @@
   </div>
 </div>
 {% endblock content %}
+{% block no_search_bar %}
+<div class="search">
+  <input
+    type="search"
+    name="q"
+    hx-get="{% url 'search_content' %}"
+    hx-trigger="keyup changed delay:500ms"
+    hx-target=".files-boxes"
+    hx-swap="innerHTML"
+    placeholder="Go to Hub to Search"
+    disabled="disabled"
+  />
+</div>
+{% endblock no_search_bar %}
