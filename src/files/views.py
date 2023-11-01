@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from files import forms
 from files.models import Directory, File
 from files.storage import S3
+from files.utils import get_size_in_largest_unit
 from users.mixins import AuthenticatedRequestMixin
 
 
@@ -239,9 +240,6 @@ class FileStatsView(AuthenticatedRequestMixin, TemplateView):
         ("video", "Video"),
     ]
 
-    # unit, size in bytes
-    size_units = [("GB", 1073741824), ("MB", 1048576), ("KB", 1024), ("B", 1)]
-
     # icons for each file type
     file_icons = {
         "image": "fa-file-image",
@@ -263,13 +261,7 @@ class FileStatsView(AuthenticatedRequestMixin, TemplateView):
             total_count += count
             type_size = sum(file.size for file in files)
             total_size += type_size
-            size_unit = "B"
-            # convert to largest possible unit
-            for unit, size in self.size_units:
-                if type_size >= size:
-                    type_size = round(type_size / size, 2)
-                    size_unit = unit
-                    break
+            size_unit, type_size = get_size_in_largest_unit(type_size)
             file_stats_by_type[template_string] = {
                 "count": count,
                 "size": type_size,
@@ -280,13 +272,7 @@ class FileStatsView(AuthenticatedRequestMixin, TemplateView):
         # set stats for "other" file types
         other_count = all_files.count() - total_count
         other_size = sum(file.size for file in all_files) - total_size
-        size_unit = "B"
-        # convert to largest possible unit
-        for unit, size in self.size_units:
-            if other_size >= size:
-                other_size = round(other_size / size, 2)
-                size_unit = unit
-                break
+        size_unit, other_size = get_size_in_largest_unit(other_size)
         file_stats_by_type["Other"] = {
             "count": other_count,
             "size": other_size,
