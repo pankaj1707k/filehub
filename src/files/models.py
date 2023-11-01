@@ -3,6 +3,8 @@ from uuid import uuid4
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from files.utils import get_size_in_largest_unit
+
 User = get_user_model()
 
 
@@ -63,3 +65,10 @@ class File(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+    def get_size(self) -> str:
+        """
+        Returns the size of the file in the largest possible unit.
+        """
+        unit, size = get_size_in_largest_unit(self.size)
+        return f"{size} {unit}"

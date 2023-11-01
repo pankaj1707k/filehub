@@ -27,7 +27,7 @@
     </div>
     <div class="file-detail" style="font-size: 1.4rem; flex: 50%">
       <p>Uploaded on: {{ file.uploaded_on }}</p>
-      <p>Size: {{ file.size }}</p>
+      <p>Size: {{ file.get_size }}</p>
       <p>Type: {{ file.type }}</p>
       <div class="file-operations">
         <button
