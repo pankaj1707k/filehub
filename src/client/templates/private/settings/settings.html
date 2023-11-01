@@ -1,4 +1,7 @@
-{% extends "private/base.html" %} {% block content %}
+{% extends "private/base.html" %} {% block search_bar %}
+<!-- A block element that will not be visible but ensures that the logout component stays at the rightmost end -->
+<div class="search-bar"></div>
+{% endblock search_bar %} {% block content %}
 <div class="main-content-boxes">
   <div class="box">
     <div class="box-section1">
