@@ -222,3 +222,77 @@ class SearchView(AuthenticatedRequestMixin, TemplateView):
         context = super().get_context_data(**kwargs)
         context.update({"dirs": dirs, "files": files})
         return render(request, self.template_name, context)
+
+
+class FileStatsView(AuthenticatedRequestMixin, TemplateView):
+    """
+    Render statistics for each file type.
+    """
+
+    template_name = "private/dashboard/file_stats.html"
+
+    # type, template string
+    file_types = [
+        ("image", "Image"),
+        ("pdf", "PDF"),
+        ("audio", "Audio"),
+        ("video", "Video"),
+    ]
+
+    # unit, size in bytes
+    size_units = [("GB", 1073741824), ("MB", 1048576), ("KB", 1024), ("B", 1)]
+
+    # icons for each file type
+    file_icons = {
+        "image": "fa-file-image",
+        "pdf": "fa-file-pdf",
+        "audio": "fa-file-audio",
+        "video": "fa-file-video",
+        "other": "fa-file",
+    }
+
+    def get_context_data(self, **kwargs) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        all_files = File.objects.filter(owner=self.request.user)
+        file_stats_by_type = {}
+        total_size = total_count = 0
+
+        for type, template_string in self.file_types:
+            files = all_files.filter(type__icontains=type)
+            count = files.count()
+            total_count += count
+            type_size = sum(file.size for file in files)
+            total_size += type_size
+            size_unit = "B"
+            # convert to largest possible unit
+            for unit, size in self.size_units:
+                if type_size >= size:
+                    type_size = round(type_size / size, 2)
+                    size_unit = unit
+                    break
+            file_stats_by_type[template_string] = {
+                "count": count,
+                "size": type_size,
+                "unit": size_unit,
+                "icon": self.file_icons[type],
+            }
+
+        # set stats for "other" file types
+        other_count = all_files.count() - total_count
+        other_size = sum(file.size for file in all_files) - total_size
+        size_unit = "B"
+        # convert to largest possible unit
+        for unit, size in self.size_units:
+            if other_size >= size:
+                other_size = round(other_size / size, 2)
+                size_unit = unit
+                break
+        file_stats_by_type["Other"] = {
+            "count": other_count,
+            "size": other_size,
+            "unit": size_unit,
+            "icon": self.file_icons["other"],
+        }
+
+        context["stats"] = file_stats_by_type
+        return context

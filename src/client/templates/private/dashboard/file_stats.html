@@ -1,0 +1,12 @@
+{% for type, data in stats.items %}
+<div class="box">
+  <div class="file-info">
+    <i class="fa-regular {{ data.icon }}"></i>
+    <div>
+      <p>{{ type }}</p>
+      <span>{{ data.count }}</span>
+    </div>
+  </div>
+  <span>{{ data.size }} {{ data.unit }}</span>
+</div>
+{% endfor %}

@@ -296,3 +296,41 @@ class SearchContentTest(TestCase):
 
     def tearDown(self) -> None:
         self.client.logout()
+
+
+class FileStatsTest(TestCase):
+    """
+    Tests for file statistics view.
+    """
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.stats_url = reverse("file_stats")
+        cls.user = User.objects.create(username="testuser", email="tu@test.com")
+        cls.user.set_password("testing123")
+        cls.user.save()
+        root_dir = Directory.objects.get(name="root", owner=cls.user)
+        cls.test_file = File.objects.create(
+            name="testfile",
+            type="image/png",
+            size=1024,
+            directory=root_dir,
+            owner=cls.user,
+        )
+
+    def setUp(self) -> None:
+        self.client.force_login(self.user)
+
+    def test_stats(self) -> None:
+        response = self.client.get(self.stats_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("stats", response.context)
+        for file_type in views.FileStatsView.file_types:
+            self.assertIn(file_type[1], response.context["stats"])
+        self.assertIn("Other", response.context["stats"])
+        self.assertEqual(response.context["stats"]["Image"]["count"], 1)
+        self.assertEqual(response.context["stats"]["Image"]["size"], 1)
+        self.assertEqual(response.context["stats"]["Image"]["unit"], "KB")
+
+    def tearDown(self) -> None:
+        self.client.logout()
