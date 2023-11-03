@@ -1,7 +1,7 @@
 from uuid import uuid4
 
 import urllib3
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user, get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
@@ -112,6 +112,7 @@ class FileDeleteTest(TestCase):
         self.assertEqual(response.status_code, 204)
         self.assertTrue(response.has_header("HX-Trigger"))
         self.assertEqual(storage_response.status, 404)
+        self.assertEqual(get_user(self.client).storage_used, 0)
 
 
 class FileCreateTest(TestCase):
@@ -141,6 +142,21 @@ class FileCreateTest(TestCase):
         )
         self.assertEqual(response.status_code, 201)
         self.assertTrue(File.objects.filter(**file_data).exists())
+        self.assertEqual(get_user(self.client).storage_used, file_data["size"])
+
+    def test_create_file_with_invalid_size(self) -> None:
+        file_data = {
+            "id": uuid4(),
+            "name": "testfile",
+            "type": "text/plain",
+            "size": 1024 * 1024 * 1024 * 2,  # 2GB (more than max storage)
+        }
+        response = self.client.post(
+            self.create_url, file_data, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(File.objects.filter(**file_data).exists())
+        self.assertEqual(get_user(self.client).storage_used, 0)
 
     def tearDown(self) -> None:
         self.client.logout()

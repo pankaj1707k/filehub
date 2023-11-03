@@ -75,10 +75,31 @@ class FileCreateView(AuthenticatedRequestMixin, View):
         request_data = json.loads(request.body)
         file_form = forms.FileForm(request_data)
         if file_form.is_valid():
+            # ensure user has enough storage space
+            if (
+                request.user.storage_used + file_form.instance.size
+                > request.user.max_storage
+            ):
+                return JsonResponse(
+                    {
+                        "error": (
+                            f"File is too large. You have "
+                            f"{request.user.max_storage - request.user.storage_used} "
+                            f"bytes left."
+                        )
+                    },
+                    status=400,
+                )
             data = file_form.cleaned_data
             data["owner"] = request.user
             data["id"] = request_data["id"]
             File.objects.create(**data)
+            setattr(
+                request.user,
+                "storage_used",
+                getattr(request.user, "storage_used") + data["size"],
+            )
+            request.user.save()
             return HttpResponse(status=201)
         return JsonResponse(file_form.errors, status=400)
 
@@ -124,6 +145,12 @@ class FileDeleteView(AuthenticatedRequestMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         file = File.objects.get(id=kwargs.get("id"))
         file.delete()
+        setattr(
+            request.user,
+            "storage_used",
+            max(getattr(request.user, "storage_used") - file.size, 0),
+        )
+        request.user.save()
         response = HttpResponse(status=204)
         response["HX-Trigger"] = "contentChange"
         return response
