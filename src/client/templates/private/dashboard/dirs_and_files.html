@@ -1,43 +1,53 @@
 {% load static %} {% for dir in dirs %}
 <div class="file-box">
   <!-- <i class="fa-solid fa-download"></i> -->
+  {% if request.user == dir.parent_directory.owner %}
   <button
-      class="btn btn-danger"
-      hx-post="{% url 'delete_dir' dir.id %}"
-      hx-trigger="click"
-      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-      style="background-color: #5b5fbb !important;font-size: 0.8rem;border: none;"
-    >
-      <i class="fa-solid fa-trash"></i>
-    </button>
+    class="btn btn-danger"
+    hx-post="{% url 'delete_dir' dir.id %}"
+    hx-trigger="click"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    style="
+      background-color: #5b5fbb !important;
+      font-size: 0.8rem;
+      border: none;
+    "
+  >
+    <i class="fa-solid fa-trash"></i>
+  </button>
+  {% endif %}
   <div class="file-box-card-body">
     <h3>D</h3>
     <a href="{% url 'dir_contents' dir.id %}">{{ dir.name }}</a>
   </div>
   <div class="file-box-card-footer">
     <span> {{ dir.last_modified|date:"F d, Y" }} </span>
-    
   </div>
 </div>
 {% endfor %} {% for file in files %}
 <div class="file-box">
   <!-- <i class="fa-solid fa-download"></i> -->
+  {% if request.user == file.directory.owner %}
   <button
-      class="btn btn-danger"
-      hx-post="{% url 'delete_file' file.id %}"
-      hx-trigger="click"
-      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
-      style="background-color: #5b5fbb !important;font-size: 0.8rem;border: none;"
-    >
-      <i class="fa-solid fa-trash" ></i>
-    </button>
+    class="btn btn-danger"
+    hx-post="{% url 'delete_file' file.id %}"
+    hx-trigger="click"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+    style="
+      background-color: #5b5fbb !important;
+      font-size: 0.8rem;
+      border: none;
+    "
+  >
+    <i class="fa-solid fa-trash"></i>
+  </button>
+  {% endif %}
   <div class="file-box-card-body">
     <h3>F</h3>
     <a href="{% url 'detail_file' file.id %}">{{ file.name }}</a>
   </div>
   <div class="file-box-card-footer">
     <span> {{ file.uploaded_on|date:"F d, Y" }} </span>
-    
   </div>
 </div>
 {% endfor %}

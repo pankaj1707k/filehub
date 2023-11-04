@@ -82,10 +82,16 @@ class FileDeleteTest(TestCase):
     must be autodeleted from the object storage.
     """
 
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.user = User.objects.create(username="testuser", email="tu@test.com")
+        cls.user.set_password("testing123")
+        cls.user.save()
+        cls.non_owner = User.objects.create(username="nonowner", email="nn@test.com")
+        cls.non_owner.set_password("testing123")
+        cls.non_owner.save()
+
     def setUp(self) -> None:
-        self.user = User.objects.create(username="testuser", email="tu@test.com")
-        self.user.set_password("testing123")
-        self.user.save()
         self.file = File.objects.create(
             name="testfile",
             type="text/plain",
@@ -93,26 +99,35 @@ class FileDeleteTest(TestCase):
             directory=Directory.objects.get(name="root", owner=self.user),
             owner=self.user,
         )
-        self.storage_client = S3()
-        upload_url = self.storage_client.get_upload_url(str(self.file.id), 5)
+
+    def test_file_delete(self) -> None:
+        storage_client = S3()
+        upload_url = storage_client.get_upload_url(str(self.file.id), 5)
         urllib3.request(
             "PUT",
             upload_url,
             body="someplaintextdata",
             headers={"Content-Type": "text/plain"},
         )
-        self.delete_url = reverse("delete_file", args=(self.file.id,))
+        delete_url = reverse("delete_file", args=(self.file.id,))
         self.client.force_login(self.user)
-
-    def test_file_delete(self) -> None:
         key = str(self.file.id)
-        download_url = self.storage_client.get_download_url(key, 5)
-        response = self.client.post(self.delete_url)
+        download_url = storage_client.get_download_url(key, 5)
+        response = self.client.post(delete_url)
         storage_response = urllib3.request("GET", download_url)
         self.assertEqual(response.status_code, 204)
         self.assertTrue(response.has_header("HX-Trigger"))
         self.assertEqual(storage_response.status, 404)
         self.assertEqual(get_user(self.client).storage_used, 0)
+
+    def test_unauthorized_delete(self) -> None:
+        self.client.force_login(self.non_owner)
+        delete_url = reverse("delete_file", args=(self.file.id,))
+        response = self.client.post(delete_url)
+        self.assertEqual(response.status_code, 403)
+
+    def tearDown(self) -> None:
+        self.client.logout()
 
 
 class FileCreateTest(TestCase):
@@ -126,6 +141,10 @@ class FileCreateTest(TestCase):
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
         cls.user.save()
+        cls.root_id = str(Directory.objects.get(name="root", owner=cls.user).id)
+        cls.non_owner = User.objects.create(username="nonowner", email="nn@test.com")
+        cls.non_owner.set_password("testing123")
+        cls.non_owner.save()
 
     def setUp(self) -> None:
         self.client.force_login(self.user)
@@ -136,6 +155,7 @@ class FileCreateTest(TestCase):
             "name": "testfile",
             "type": "text/plain",
             "size": 100,
+            "directory": self.root_id,
         }
         response = self.client.post(
             self.create_url, file_data, content_type="application/json"
@@ -150,6 +170,7 @@ class FileCreateTest(TestCase):
             "name": "testfile",
             "type": "text/plain",
             "size": 1024 * 1024 * 1024 * 2,  # 2GB (more than max storage)
+            "directory": self.root_id,
         }
         response = self.client.post(
             self.create_url, file_data, content_type="application/json"
@@ -157,6 +178,20 @@ class FileCreateTest(TestCase):
         self.assertEqual(response.status_code, 400)
         self.assertFalse(File.objects.filter(**file_data).exists())
         self.assertEqual(get_user(self.client).storage_used, 0)
+
+    def test_unauthorized_create(self) -> None:
+        self.client.force_login(self.non_owner)
+        file_data = {
+            "id": uuid4(),
+            "name": "testfile",
+            "type": "text/plain",
+            "size": 100,
+            "directory": self.root_id,
+        }
+        response = self.client.post(
+            self.create_url, file_data, content_type="application/json"
+        )
+        self.assertEqual(response.status_code, 403)
 
     def tearDown(self) -> None:
         self.client.logout()
@@ -180,6 +215,9 @@ class FileUpdateTest(TestCase):
             owner=cls.user,
         )
         cls.update_url = reverse("update_file", args=(cls.file.id,))
+        cls.non_owner = User.objects.create(username="nonowner", email="nn@test.com")
+        cls.non_owner.set_password("testing123")
+        cls.non_owner.save()
 
     def setUp(self) -> None:
         self.client.force_login(self.user)
@@ -190,6 +228,12 @@ class FileUpdateTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, post_data["name"])
         self.assertEqual(File.objects.get(id=self.file.id).name, post_data["name"])
+
+    def test_unauthorized_update(self) -> None:
+        self.client.force_login(self.non_owner)
+        post_data = {"name": "testfileupdated"}
+        response = self.client.post(self.update_url, post_data)
+        self.assertEqual(response.status_code, 403)
 
     def tearDown(self) -> None:
         self.client.logout()
@@ -207,6 +251,9 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         cls.user = User.objects.create(username="testuser", email="tu@test.com")
         cls.user.set_password("testing123")
         cls.user.save()
+        cls.non_owner = User.objects.create(username="nonowner", email="nn@test.com")
+        cls.non_owner.set_password("testing123")
+        cls.non_owner.save()
 
     def setUp(self) -> None:
         self.client.force_login(self.user)
@@ -221,6 +268,17 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         response = self.client.post(self.create_url, post_data)
         self.assertEqual(response.status_code, 204)
         self.assertTrue(response.has_header("HX-Trigger"))
+
+    def test_unauthorized_create(self) -> None:
+        self.client.force_login(self.non_owner)
+        root_dir_id = str(Directory.objects.get(name="root", owner=self.user).id)
+        post_data = {
+            "name": "testdir",
+            "parent_directory": root_dir_id,
+            "owner": self.non_owner.id,
+        }
+        response = self.client.post(self.create_url, post_data)
+        self.assertEqual(response.status_code, 403)
 
     def test_update_directory(self) -> None:
         dir = Directory.objects.create(
@@ -242,6 +300,18 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         response = self.client.post(update_url, post_data)
         self.assertEqual(response.status_code, 403)
 
+    def test_unauthorized_update(self) -> None:
+        dir = Directory.objects.create(
+            name="testdir",
+            parent_directory=Directory.objects.get(name="root", owner=self.user),
+            owner=self.user,
+        )
+        update_url = reverse("update_dir", args=(dir.id,))
+        post_data = {"name": "testdirupdated"}
+        self.client.force_login(self.non_owner)
+        response = self.client.post(update_url, post_data)
+        self.assertEqual(response.status_code, 403)
+
     def test_delete(self) -> None:
         dir = Directory.objects.create(
             name="testdir",
@@ -257,6 +327,17 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         root = Directory.objects.get(name="root", owner=self.user)
         update_url = reverse("delete_dir", args=(root.id,))
         response = self.client.post(update_url)
+        self.assertEqual(response.status_code, 403)
+
+    def test_unauthorized_delete(self) -> None:
+        dir = Directory.objects.create(
+            name="testdir",
+            parent_directory=Directory.objects.get(name="root", owner=self.user),
+            owner=self.user,
+        )
+        delete_url = reverse("delete_dir", args=(dir.id,))
+        self.client.force_login(self.non_owner)
+        response = self.client.post(delete_url)
         self.assertEqual(response.status_code, 403)
 
     def tearDown(self) -> None:

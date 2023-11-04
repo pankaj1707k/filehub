@@ -75,6 +75,9 @@ class FileCreateView(AuthenticatedRequestMixin, View):
         request_data = json.loads(request.body)
         file_form = forms.FileForm(request_data)
         if file_form.is_valid():
+            # check ownership of parent directory
+            if file_form.instance.directory.owner != request.user:
+                return HttpResponse(status=403)
             # ensure user has enough storage space
             if (
                 request.user.storage_used + file_form.instance.size
@@ -128,6 +131,8 @@ class FileUpdateView(AuthenticatedRequestMixin, View):
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         file = File.objects.get(id=kwargs.get("id"))
+        if file.owner != request.user:
+            return HttpResponse(status=403)
         form = forms.FileUpdateForm(request.POST, instance=file)
         if form.is_valid():
             form.save()
@@ -144,6 +149,8 @@ class FileDeleteView(AuthenticatedRequestMixin, View):
 
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         file = File.objects.get(id=kwargs.get("id"))
+        if file.owner != request.user:
+            return HttpResponse(status=403)
         file.delete()
         setattr(
             request.user,
@@ -187,6 +194,8 @@ class DirectoryCreateView(AuthenticatedRequestMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         form = forms.DirectoryForm(request.POST)
         if form.is_valid():
+            if form.instance.parent_directory.owner != request.user:
+                return HttpResponse(status=403)
             form.save()
             response = HttpResponse(status=204)
             response["HX-Trigger"] = "contentChange"
@@ -205,7 +214,8 @@ class DirectoryUpdateView(AuthenticatedRequestMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         dir = Directory.objects.get(id=kwargs.get("id"))
         # do not allow root directory to be renamed
-        if dir.name == "root":
+        # do not allow renaming of directories that do not belong to the user
+        if dir.name == "root" or dir.owner != request.user:
             return HttpResponse(status=403)
         form = forms.DirectoryUpdateForm(request.POST, instance=dir)
         if form.is_valid():
@@ -225,7 +235,8 @@ class DirectoryDeleteView(AuthenticatedRequestMixin, View):
     def post(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
         dir = Directory.objects.get(id=kwargs.get("id"))
         # do not allow deletion of root directory
-        if dir.name == "root":
+        # do not allow deletion of directories that do not belong to the user
+        if dir.name == "root" or dir.owner != request.user:
             return HttpResponse(status=403)
         dir.delete()
         response = HttpResponse(status=204)

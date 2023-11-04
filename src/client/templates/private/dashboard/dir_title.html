@@ -1,5 +1,6 @@
 {% if curr_dir.name != "root" %}
 <h3 id="dirTitle">{{ curr_dir.name }}</h3>
+{% if request.user == curr_dir.owner %}
 <button
   type="button"
   class="btn btn-primary ms-4"
@@ -8,4 +9,4 @@
 >
   Edit
 </button>
-{% endif %}
+{% endif %} {% endif %}

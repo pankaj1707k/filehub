@@ -43,6 +43,7 @@
         >
           Download
         </button>
+        {% if request.user == file.owner %}
         <button
           class="btn btn-secondary"
           data-bs-toggle="modal"
@@ -56,6 +57,7 @@
         >
           Rename
         </button>
+        {% endif %}
       </div>
     </div>
   </div>

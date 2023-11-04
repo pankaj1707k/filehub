@@ -19,6 +19,7 @@
       hx-get="{% url 'file_stats' %}"
       hx-trigger="load, contentChange from:body"
     ></div>
+    {% if request.user == curr_dir.owner %}
     <!-- Upload new file -->
     <input type="file" name="select files" id="file-selector" multiple hidden />
     <button id="upload-btn"><i class="fa-solid fa-angles-up"></i>Upload</button>
@@ -33,6 +34,7 @@
       <input type="hidden" name="owner" value="{{ request.user.id }}" />
       <button id="dir-btn" type="submit">Create Folder</button>
     </form>
+    {% endif %}
   </div>
   <div
     class="files-boxes"
@@ -93,17 +95,4 @@
     </div>
   </div>
 </div>
-{% endblock content %} {% block no_search_bar %}
-<div class="search">
-  <input
-    type="search"
-    name="q"
-    hx-get="{% url 'search_content' %}"
-    hx-trigger="keyup changed delay:500ms"
-    hx-target=".files-boxes"
-    hx-swap="innerHTML"
-    placeholder="Go to Hub to Search"
-    disabled="disabled"
-  />
-</div>
-{% endblock no_search_bar %}
+{% endblock content %}
