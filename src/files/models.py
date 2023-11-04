@@ -56,8 +56,6 @@ class File(models.Model):
         on_delete=models.CASCADE,
         related_name="files",
         related_query_name="file",
-        null=True,
-        blank=True,
     )
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="files", related_query_name="file"
