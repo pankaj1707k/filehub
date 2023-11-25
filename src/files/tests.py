@@ -280,6 +280,16 @@ class DirectoryCreateUpdateDeleteTest(TestCase):
         response = self.client.post(self.create_url, post_data)
         self.assertEqual(response.status_code, 403)
 
+    def test_name_root_not_allowed(self) -> None:
+        root_dir_id = str(Directory.objects.get(name="root", owner=self.user).id)
+        post_data = {
+            "name": "root",
+            "parent_directory": root_dir_id,
+            "owner": self.user.id,
+        }
+        response = self.client.post(self.create_url, post_data)
+        self.assertEqual(response.status_code, 400)
+
     def test_update_directory(self) -> None:
         dir = Directory.objects.create(
             name="testdir",

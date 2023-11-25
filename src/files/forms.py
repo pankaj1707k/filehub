@@ -20,6 +20,9 @@ class DirectoryForm(ModelForm):
         model = Directory
         fields = "__all__"
 
+    def is_valid(self) -> bool:
+        return super().is_valid() and self.instance.name != "root"
+
 
 class DirectoryUpdateForm(ModelForm):
     class Meta:
