@@ -815,3 +815,10 @@ main .main-content .title::after {
 .modal-content {
   background-color: var(--bg-color);
 }
+.file-thumbnail-wrapper {
+  flex: 50%;
+  text-align: center;
+}
+.file-thumbnail {
+  height: 12rem;
+}

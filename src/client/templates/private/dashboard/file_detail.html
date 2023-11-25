@@ -13,17 +13,12 @@
     class="file-detail-container"
     style="margin-top: 10%; display: flex; flex-direction: row"
   >
-    <div
-      class="file-thumbnail"
-      style="
-        flex: 50%;
-        font-size: 9rem;
-        text-align: center;
-        padding-top: 0;
-        padding-bottom: 0;
-      "
-    >
-      <i class="fa-regular fa-file-pdf"></i>
+    <div class="file-thumbnail-wrapper">
+      <img
+        src="{% static 'images/file.png' %}"
+        alt="F"
+        class="file-thumbnail"
+      />
     </div>
     <div class="file-detail" style="font-size: 1.4rem; flex: 50%">
       <p>Uploaded on: {{ file.uploaded_on }}</p>
